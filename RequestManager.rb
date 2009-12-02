@@ -1,6 +1,6 @@
-require 'HTTPReplyCode'
-require 'RequestHandler'
-require 'MIMEType'
+require 'site/HTTPReplyCode'
+require 'site/RequestHandler'
+require 'site/MIMEType'
 
 class RequestManager
 	def initialize()
