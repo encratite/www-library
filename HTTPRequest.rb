@@ -1,7 +1,7 @@
 require 'cgi'
 
 class HTTPRequest
-	attr_reader :path, :pathString, :method, :accept
+	attr_reader :path, :pathString, :method, :accept, :address
 	
 	def initialize(environment)
 		@pathString = environment['REQUEST_PATH']
@@ -21,5 +21,7 @@ class HTTPRequest
 		environment['HTTP_ACCEPT'].split(', ').each do |token|
 			@accept << token.split(';')[0]
 		end
+		
+		@address = environment['REMOTE_ADDR']
 	end
 end

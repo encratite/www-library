@@ -28,10 +28,15 @@ END
 	end
 	
 	def foot()
-		return
+		output =
 <<END
 </body>
 </html>
 END
+		return output
+	end
+	
+	def get(title, content)
+		return head(title) + content + foot
 	end
 end
