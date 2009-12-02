@@ -28,6 +28,7 @@ class RequestManager
 				contentType, content = output
 			else
 				contentType = MIMEType.XHTML
+				contentType = MIMEType.HTML if !request.accept.include?(contentType)
 				content = output
 			end
 		end
