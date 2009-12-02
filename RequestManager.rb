@@ -1,6 +1,14 @@
-require 'site/HTTPReplyCode'
-require 'site/RequestHandler'
-require 'site/MIMEType'
+base = 'site'
+
+includes =
+[
+	'HTTPRequest',
+	'HTTPReplyCode',
+	'RequestHandler',
+	'MIMEType'
+]
+
+includes.each { |name| require base + '/' + name }
 
 class RequestManager
 	def initialize()
@@ -8,27 +16,29 @@ class RequestManager
 	end
 	
 	def addHandler(path, handler)
-		@handlers <<= RequestHandler.new(path.split('/'), handler)
+		@handlers << RequestHandler.new(path.split('/'), handler)
 	end
 	
-	def handleRequest(request)
+	def handleRequest(environment)
+		request = HTTPRequest.new environment
 		output = nil
 		@handlers.each do |handler|
 			output = handler.match request
 			break if output != nil
 		end
 		
+		
 		if output == nil
-			replyCode = HTTPReplyCode.NotFound
-			contentType = MIMEType.Plain
+			replyCode = HTTPReplyCode::NotFound
+			contentType = MIMEType::Plain
 			content = 'Unable to find ' + request.pathString
 		else
-			replyCode = HTTPReplyCode.Ok
+			replyCode = HTTPReplyCode::Ok
 			if output.class == Array
 				contentType, content = output
 			else
-				contentType = MIMEType.XHTML
-				contentType = MIMEType.HTML if !request.accept.include?(contentType)
+				contentType = MIMEType::XHTML
+				contentType = MIMEType::HTML if !request.accept.include?(contentType)
 				content = output
 			end
 		end
