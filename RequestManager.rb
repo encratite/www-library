@@ -17,7 +17,7 @@ class RequestManager
 	end
 	
 	def addHandler(path, handler)
-		@handlers << RequestHandler.new(path.split('/'), handler)
+		@handlers << RequestHandler.new(HTTPRequest.tokenisePath(path), method(handler))
 	end
 	
 	def handleRequest(environment)
@@ -25,7 +25,6 @@ class RequestManager
 		output = nil
 		
 		begin
-			x = 1 / 0
 			@handlers.each do |handler|
 				output = handler.match request
 				break if output != nil

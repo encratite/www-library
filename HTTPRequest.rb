@@ -5,8 +5,7 @@ class HTTPRequest
 	
 	def initialize(environment)
 		@pathString = environment['REQUEST_PATH']
-		pathTokens = @pathString.split('/')
-		pathTokens.shift if pathTokens.size > 0
+		pathTokens = HTTPRequest.tokenisePath @pathString
 		@path = pathTokens.map { |token| CGI.unescape(token) }
 		
 		requestMethods =
@@ -23,5 +22,11 @@ class HTTPRequest
 		end
 		
 		@address = environment['REMOTE_ADDR']
+	end
+	
+	def self.tokenisePath(path)
+		tokens = path.split('/')
+		tokens.shift if path.size > 0 && path[0] == '/'
+		return tokens
 	end
 end
