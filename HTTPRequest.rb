@@ -1,7 +1,7 @@
 require 'cgi'
 
 class HTTPRequest
-	attr_reader :path, :pathString, :method, :accept, :address
+	attr_reader :path, :pathString, :method, :accept, :address, :input, :environment
 	
 	def initialize(environment)
 		@pathString = environment['REQUEST_PATH']
@@ -22,11 +22,28 @@ class HTTPRequest
 		end
 		
 		@address = environment['REMOTE_ADDR']
+		
+		@input = CGI::parse(environment['rack.input'].read())
+		
+		@environment = environment
 	end
 	
 	def self.tokenisePath(path)
 		tokens = path.split('/')
 		tokens.shift if path.size > 0 && path[0] == '/'
 		return tokens
+	end
+	
+	def getInput(name)
+		output = @input[name]
+		return nil if output == nil
+		return output[0]
+	end
+	
+	def isSet(*names)
+		names.each do |name|
+			return false if @input[name] == nil
+		end
+		return true
 	end
 end

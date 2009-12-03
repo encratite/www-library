@@ -8,7 +8,6 @@ class RequestHandler
 	
 	def match(request)
 		path = request.path
-		puts "#{path} vs. #{@path}"
 		return nil if path.size < @path.size
 		path.size.times do |i|
 			return nil if path[i] != @path[i]
