@@ -27,7 +27,7 @@ END
 		return output
 	end
 	
-	def foot()
+	def foot
 		output =
 <<END
 </body>
