@@ -7,11 +7,6 @@ class RequestHandler
 	end
 	
 	def match(request)
-		path = request.path
-		return nil if path.size < @path.size
-		path.size.times do |i|
-			return nil if path[i] != @path[i]
-		end
-		return @handler.(request)
+		@handler.(request) if @path == request.path[0..(@path.size - 1)]
 	end
 end

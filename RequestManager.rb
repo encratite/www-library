@@ -50,7 +50,7 @@ class RequestManager
 			
 			if hasDebugPrivilege request
 				content = "An exception of type #{exception.class} occured:\n\n"
-				exception.backtrace.each { |line| content += line + "\n" }
+				content += exception.backtrace.join "\n"
 			else
 				content = 'An internal server error occured.'
 			end
