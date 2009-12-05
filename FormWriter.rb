@@ -9,12 +9,16 @@ class FormWriter
 		type = arguments[:type]
 		name = arguments[:name] || label.downcase
 		id = arguments[:id] || name
+		value = arguments[:value]
 		
 		if type == nil
 			passwordString = 'password'
 			type = label.downcase.include? passwordString ? passwordString : 'text'
 		end
-		@output.concat "<p>\n<label for=\"#{id}\">#{label}:</label><br />\n<input type=\"#{type}\" id=\"#{id}\" name=\"#{name}\" />\n</p>\n"
+		
+		valueString = value == nil ? '' : "value=\"#{value}\""
+		
+		@output.concat "<p>\n<label for=\"#{id}\">#{label}:</label><br />\n<input type=\"#{type}\" id=\"#{id}\" name=\"#{name}\" #{valueString}/>\n</p>\n"
 	end
 
 	def submitButton
