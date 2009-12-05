@@ -5,8 +5,8 @@ def isValidEmailAddress address
 	firstGroupLetter = '[A-Za-z]'
 	groupLetter = '[A-Za-z0-9]'
 	group = "#{firstGroupLetter}#{groupLetter}*"
-	label = "(xn--)?#{group}(-#{group})*"
-	domain = "#{label}(\\.#{label})"
+	label = "#{group}(-+#{group})*"
+	domain = "#{label}(\\.#{label})*"
 	
 	email = "#{localString}@#{domain}"
 	patternString = "^#{email}$"
