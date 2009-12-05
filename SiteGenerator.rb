@@ -1,6 +1,10 @@
 class SiteGenerator
-	def initialize()
+	def initialize
 		@stylesheets = []
+	end
+	
+	def addStylesheet(stylesheet)
+		@stylesheets << stylesheet
 	end
 	
 	def head(title)
