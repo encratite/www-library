@@ -15,25 +15,3 @@ def isValidEmailAddress address
 	pattern.match(address) != nil
 end
 
-
-[
-	'wef@wefwef.net',
-	'wef.wef$wef@wefwef.net',
-	'wef@xn--wefwef.xn--net',
-	'.wef@wefwef.net',
-	'we..f@wefwef.net',
-	'domain.net',
-	'-invalid.domain.net',
-	'valid-domain.net',
-	'xn--valid.xn--net',
-	'0invalid-domain.net',
-	'group1',
-	'1nogroup',
-	'val1d.local',
-	'invalid..local',
-	'invalid.local.',
-	'.invalid.local',
-	'1',
-	'~',
-	'.'
-].each { |address| puts "#{address}: #{isValidEmailAddress(address)}" }
