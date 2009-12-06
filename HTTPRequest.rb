@@ -1,7 +1,7 @@
 require 'cgi'
 
 class HTTPRequest
-	attr_reader :path, :pathString, :method, :accept, :address, :input, :environment
+	attr_reader :path, :pathString, :method, :accept, :address, :getInput, :postInput, :environment
 	
 	def initialize(environment)
 		@pathString = environment['REQUEST_PATH']
@@ -23,7 +23,18 @@ class HTTPRequest
 		
 		@address = environment['REMOTE_ADDR']
 		
-		@input = CGI::parse(environment['rack.input'].read())
+		@getInput = CGI::parse(environment['QUERY_STRING'])
+		@postInput = CGI::parse(environment['rack.input'].read())
+		
+		@cookies = {}
+		cookieTokens = environment['HTTP_COOKIE'].split(';').map { |token| token.strip }
+		cookieTokens.each do |token|
+			assignmentTokens = token.split '='
+			next if assignmentTokens.size != 2
+			variable, value = assignmentTokens
+			value = CGI::unescape value
+			@cookies[variable] = value
+		end
 		
 		@environment = environment
 	end
