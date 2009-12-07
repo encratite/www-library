@@ -3,7 +3,7 @@ require 'site/MIMEType'
 require 'site/Cookie'
 
 class HTTPReply
-	attr_writer :replyCode, :contentType, :content
+	attr_accessor :replyCode, :contentType, :content
 	
 	def initialize(content)
 		@replyCode = HTTPReplyCode::Ok

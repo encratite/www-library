@@ -18,8 +18,8 @@ class RequestManager
 		@requestClass = requestClass
 	end
 	
-	def addHandler(path, handler)
-		@handlers << RequestHandler.new(HTTPRequest.tokenisePath(path), handler)
+	def addHandler(handler)
+		@handlers << handler
 	end
 	
 	def handleRequest(environment)
