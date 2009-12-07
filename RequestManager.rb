@@ -13,8 +13,9 @@ includes =
 includes.each { |name| require base + '/' + name }
 
 class RequestManager
-	def initialize()
+	def initialize(requestClass = HTTPRequest)
 		@handlers = []
+		@requestClass = requestClass
 	end
 	
 	def addHandler(path, handler)
@@ -22,7 +23,7 @@ class RequestManager
 	end
 	
 	def handleRequest(environment)
-		request = HTTPRequest.new environment
+		request = @requestClass.new environment
 		output = nil
 		
 		begin
