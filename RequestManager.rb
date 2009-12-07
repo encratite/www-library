@@ -18,7 +18,7 @@ class RequestManager
 	end
 	
 	def addHandler(path, handler)
-		@handlers << RequestHandler.new(HTTPRequest.tokenisePath(path), method(handler))
+		@handlers << RequestHandler.new(HTTPRequest.tokenisePath(path), handler)
 	end
 	
 	def handleRequest(environment)

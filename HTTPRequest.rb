@@ -1,7 +1,7 @@
 require 'cgi'
 
 class HTTPRequest
-	attr_reader :path, :pathString, :method, :accept, :address, :getInput, :postInput, :environment
+	attr_reader :path, :pathString, :method, :accept, :address, :getInput, :postInput, :cookies, :environment
 	
 	def initialize(environment)
 		@pathString = environment['REQUEST_PATH']
