@@ -27,13 +27,16 @@ class HTTPRequest
 		@postInput = CGI::parse(environment['rack.input'].read())
 		
 		@cookies = {}
-		cookieTokens = environment['HTTP_COOKIE'].split(';').map { |token| token.strip }
-		cookieTokens.each do |token|
-			assignmentTokens = token.split '='
-			next if assignmentTokens.size != 2
-			variable, value = assignmentTokens
-			value = CGI::unescape value
-			@cookies[variable] = value
+		cookies = environment['HTTP_COOKIE']
+		if cookies != nil
+			cookieTokens = cookies.split(';').map { |token| token.strip }
+			cookieTokens.each do |token|
+				assignmentTokens = token.split '='
+				next if assignmentTokens.size != 2
+				variable, value = assignmentTokens
+				value = CGI::unescape value
+				@cookies[variable] = value
+			end
 		end
 		
 		@environment = environment
@@ -42,19 +45,17 @@ class HTTPRequest
 	def self.tokenisePath(path)
 		tokens = path.split('/')
 		tokens.shift if path.size > 0 && path[0] == '/'
-		return tokens
+		tokens
 	end
 	
 	def getInput(name)
 		output = @input[name]
 		return nil if output == nil
-		return output[0]
+		output[0]
 	end
 	
 	def isSet(*names)
-		names.each do |name|
-			return false if @input[name] == nil
-		end
-		return true
+		names.each { |name| return false if @input[name] == nil }
+		true
 	end
 end

@@ -8,7 +8,7 @@ class SessionString
 			['0', '9']
 		]
 		
-		targets.each { |first, last| output.concat first..last.to_a }
+		targets.each { |first, last| output.concat (first..last).to_a }
 		
 		output
 	end

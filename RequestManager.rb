@@ -32,29 +32,31 @@ class RequestManager
 				break if output != nil
 			end
 		
-			if output == nil
+			case output
+			when NilClass
 				reply = HTTPReply.new "Unable to find \"#{request.pathString}\"."
 				reply.plain
 				reply.notFound
+			when Array
+				contentType, content = output
+				reply = HTTPReply.new content
+				reply.contentType = contentType
+			when String
+				contentType = MIMEType::XHTML
+				contentType = MIMEType::HTML if !request.accept.include?(contentType)
+				reply = HTTPReply.new output
+				reply.contentType = contentType
+			when HTTPReply
+				reply = output
 			else
-				case output.class
-					when Array
-						contentType, content = output
-						reply = HTTPReply.new content
-						reply.contentType = contentType
-					when String
-						contentType = MIMEType::XHTML
-						contentType = MIMEType::HTML if !request.accept.include?(contentType)
-						reply = HTTPReply.new output
-						reply.contentType = contentType
-					when HTTPReply
-						reply = output
-					else
-						reply = HTTPReply.new 'A handler returned an invalid type.'
-						reply.plain
-						reply.error
-					end
+				if hasDebugPrivilege request
+					content = "A handler returned the invalid type #{output.class}."
+				else
+					content = 'A handler returned an invalid type.'
 				end
+				reply = HTTPReply.new content
+				reply.plain
+				reply.error
 			end
 		rescue => exception
 			if hasDebugPrivilege request
