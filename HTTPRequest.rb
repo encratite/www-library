@@ -49,14 +49,14 @@ class HTTPRequest
 		tokens
 	end
 	
-	def getInput(name)
-		output = @input[name]
+	def getPost(name)
+		output = @postInput[name]
 		return nil if output == nil
 		output[0]
 	end
 	
-	def isSet(*names)
-		names.each { |name| return false if @input[name] == nil }
+	def postIsSet(names)
+		names.each { |name| return false if @postInput[name] == nil }
 		true
 	end
 end

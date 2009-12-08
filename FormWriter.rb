@@ -13,7 +13,7 @@ class FormWriter
 		
 		if type == nil
 			passwordString = 'password'
-			type = label.downcase.include? passwordString ? passwordString : 'text'
+			type = label.downcase.include?(passwordString) ? passwordString : 'text'
 		end
 		
 		valueString = value == nil ? '' : "value=\"#{value}\""
