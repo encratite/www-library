@@ -24,6 +24,7 @@ class Cookie
 	end
 	
 	def get
+		raise 'No expiration date has been specified' if @expiration == nil
 		"#{@name}=#{@value}; Expires=#{@expiration}; Path=#{@path}; HttpOnly"
 	end
 end
