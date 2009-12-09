@@ -44,8 +44,6 @@ class HTTPReply
 		
 		fields['Set-Cookie'] = @cookies.map { |cookie| cookie.get } if !@cookies.empty?
 		
-		puts fields
-		
 		output =
 		[
 			@replyCode,
