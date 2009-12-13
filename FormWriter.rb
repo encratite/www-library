@@ -21,18 +21,21 @@ class FormWriter
 		id = arguments[:id] || name
 		value = arguments[:value]
 		options = arguments[:options]
+		onClick = arguments[:onClick]
 		
 		if type == nil
 			passwordString = 'password'
 			type = label.downcase.include?(passwordString) ? passwordString : 'text'
 		end
 		
-		valueString = value == nil ? '' : "value=\"#{value}\""
+		valueString = value == nil ? '' : " value=\"#{value}\""
+		onClickString = onClick == nil ? '' : " onclick=\"#{onClick}\""
+		
 		
 		output = "<p>\n<label for=\"#{id}\">#{label}:</label><br />\n"
 		case type
 		when :input
-			output += "<input type=\"#{type}\" id=\"#{id}\" name=\"#{name}\" #{valueString}/>\n"
+			output += "<input type=\"#{type}\" id=\"#{id}\" name=\"#{name}\"#{valueString}#{onClickString} />\n"
 		when :select
 			raise 'No options have been specified for a select statement.' if options == nil
 			output += "<select id=\"#{id}\" name=\"#{name}\">\n"
