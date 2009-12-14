@@ -25,15 +25,16 @@ class HTMLWriter
 	def p(arguments = {}, &block)
 		tag('p', arguments, block)
 	end
-end
-
-output = ''
-writer = HTMLWriter.new output
-writer.div do
-	writer.write 'check this out '
-	writer.p id: 'wef' do
-		writer.write 'lol hay'
+	
+	def table(arguments = {}, &block)
+		tag('table', arguments, block, true)
+	end
+	
+	def tr(arguments = {}, &block)
+		tag('tr', arguments, block, true)
+	end
+	
+	def td(arguments = {}, &block)
+		tag('td', arguments, block)
 	end
 end
-
-puts output

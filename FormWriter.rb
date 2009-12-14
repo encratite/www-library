@@ -10,7 +10,11 @@ end
 class FormWriter
 	def initialize(output, action)
 		@output = output
-		@output.concat "<form action=\"#{action}\" method=\"post\">\n"
+		write "<form action=\"#{action}\" method=\"post\">\n"
+	end
+	
+	def write(text)
+		@output.concat text
 	end
 	
 	def field(arguments = {})
@@ -23,25 +27,37 @@ class FormWriter
 		options = arguments[:options]
 		onClick = arguments[:onClick]
 		paragraph = arguments[:paragraph] || true
+		radio = type == :radio
+		checkd = arguments[:checked] || false
+		
+		if radio
+			type = :input
+			inputType = 'radio'
+		end
 		
 		if type == nil
 			passwordString = 'password'
 			type = label.downcase.include?(passwordString) ? passwordString : 'text'
 		end
 		
-		valueString = value == nil ? '' : " value=\"#{value}\""
-		onClickString = onClick == nil ? '' : " onclick=\"#{onClick}\""
-		
+		extendedString = ''
+		extendedString += " value=\"#{value}\"" if value != nil
+		extendedString += " onclick=\"#{onClick}\"" if onClick != nil
 		
 		output = ''
-		output += "<p>\n" if paragraph
-		output = "<label for=\"#{id}\">#{label}:</label><br />\n" if label != nil
+		write "<p>\n" if paragraph
+		output = "<label for=\"#{id}\">#{label}:</label><br />\n" if !radio && label != nil
 		case type
 		when :input
-			output += "<input type=\"#{type}\" id=\"#{id}\" name=\"#{name}\"#{valueString}#{onClickString} />\n"
+			if radio
+				extendedString += ' checked="checked"' if checked
+				write "<input type=\"#{type}\" name=\"#{name}\"#{extendedString} /> #{label}\n"
+			else
+				write "<input type=\"#{type}\" id=\"#{id}\" name=\"#{name}\"#{extendedString} />\n"
+			end
 		when :select
 			raise 'No options have been specified for a select statement.' if options == nil
-			output += "<select id=\"#{id}\" name=\"#{name}\">\n"
+			write "<select id=\"#{id}\" name=\"#{name}\">\n"
 			gotASelection = false
 			options.each do |option|
 				if option.selected
@@ -51,11 +67,11 @@ class FormWriter
 				else
 					selectedString = ''
 				end
-				output += "<option value=\"#{option.value}\"#{selectedString}>#{option.description}</option>\n"
+				write "<option value=\"#{option.value}\"#{selectedString}>#{option.description}</option>\n"
 			end
-			output += "</select>\n"
+			write "</select>\n"
 		end
-		output += "</p>\n" if paragraph
+		write "</p>\n" if paragraph
 		@output.concat output
 	end
 
