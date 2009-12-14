@@ -14,7 +14,7 @@ class FormWriter
 	end
 	
 	def field(arguments = {})
-		label = arguments[:label] || 'Description'
+		label = arguments[:label]
 		type = arguments[:type] || :input
 		inputType = arguments[:inputType]
 		name = arguments[:name] || label.downcase
@@ -22,6 +22,7 @@ class FormWriter
 		value = arguments[:value]
 		options = arguments[:options]
 		onClick = arguments[:onClick]
+		paragraph = arguments[:paragraph] || true
 		
 		if type == nil
 			passwordString = 'password'
@@ -32,7 +33,9 @@ class FormWriter
 		onClickString = onClick == nil ? '' : " onclick=\"#{onClick}\""
 		
 		
-		output = "<p>\n<label for=\"#{id}\">#{label}:</label><br />\n"
+		output = ''
+		output += "<p>\n" if paragraph
+		output = "<label for=\"#{id}\">#{label}:</label><br />\n" if label != nil
 		case type
 		when :input
 			output += "<input type=\"#{type}\" id=\"#{id}\" name=\"#{name}\"#{valueString}#{onClickString} />\n"
@@ -52,7 +55,7 @@ class FormWriter
 			end
 			output += "</select>\n"
 		end
-		output += "</p>\n"
+		output += "</p>\n" if paragraph
 		@output.concat output
 	end
 
