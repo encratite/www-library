@@ -19,7 +19,7 @@ class HTMLWriter
 	end
 	
 	def div(arguments = {}, &block)
-		tag('div', arguments, block)
+		tag('div', arguments, block, true)
 	end
 	
 	def p(arguments = {}, &block)

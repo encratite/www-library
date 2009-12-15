@@ -1,7 +1,7 @@
 class SelectOption
 	attr_reader :description, :value
 	attr_accessor :selected
-	def iniitalize(description, value, selected = false)
+	def initialize(description, value, selected = false)
 		@description = description
 		@value = value
 		@selected = selected
@@ -21,7 +21,7 @@ class FormWriter
 	def field(arguments = {})
 		label = arguments[:label]
 		type = arguments[:type] || :input
-		inputType = arguments[:inputType]
+		inputType = arguments[:inputType] || 'text'
 		name = arguments[:name] || label.downcase
 		id = arguments[:id] || name
 		value = arguments[:value]
@@ -29,7 +29,7 @@ class FormWriter
 		onClick = arguments[:onClick]
 		paragraph = arguments[:paragraph] || true
 		radio = type == :radio
-		checkd = arguments[:checked] || false
+		checked = arguments[:checked] || false
 		
 		if radio
 			type = :input
@@ -45,16 +45,15 @@ class FormWriter
 		extendedString += " value=\"#{value}\"" if value != nil
 		extendedString += " onclick=\"#{onClick}\"" if onClick != nil
 		
-		output = ''
 		write "<p>\n" if paragraph
-		output = "<label for=\"#{id}\">#{label}:</label><br />\n" if !radio && label != nil
+		write "<label for=\"#{id}\">#{label}:</label><br />\n" if !radio && label != nil
 		case type
 		when :input
 			if radio
 				extendedString += ' checked="checked"' if checked
-				write "<input type=\"#{type}\" name=\"#{name}\"#{extendedString} /> #{label}\n"
+				write "<input type=\"#{inputType}\" name=\"#{name}\"#{extendedString} /> #{label}\n"
 			else
-				write "<input type=\"#{type}\" id=\"#{id}\" name=\"#{name}\"#{extendedString} />\n"
+				write "<input type=\"#{inputType}\" id=\"#{id}\" name=\"#{name}\"#{extendedString} />\n"
 			end
 		when :select
 			raise 'No options have been specified for a select statement.' if options == nil
@@ -73,10 +72,9 @@ class FormWriter
 			write "</select>\n"
 		end
 		write "</p>\n" if paragraph
-		write output
 	end
 
-	def submitButton(description = 'Submit'
+	def submitButton(description = 'Submit')
 		write "<p>\n<input type=\"submit\" value=\"#{description}\" />\n</p>\n"
 	end
 	
