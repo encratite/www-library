@@ -1,5 +1,6 @@
 class SelectOption
-	attr_reader :description, :value, :selected
+	attr_reader :description, :value
+	attr_accessor :selected
 	def iniitalize(description, value, selected = false)
 		@description = description
 		@value = value
