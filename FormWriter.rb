@@ -73,19 +73,15 @@ class FormWriter
 			write "</select>\n"
 		end
 		write "</p>\n" if paragraph
-		@output.concat output
+		write output
 	end
 
-	def submitButton
-		@output.concat <<END
-<p>
-<input type="submit" />
-</p>
-END
+	def submitButton(description = 'Submit'
+		write "<p>\n<input type=\"submit\" value=\"#{description}\" />\n</p>\n"
 	end
 	
 	def endOfForm
-		@output.concat "</form>\n"
+		write "</form>\n"
 	end
 	
 	def finish
