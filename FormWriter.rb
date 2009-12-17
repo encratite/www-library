@@ -55,7 +55,16 @@ class FormWriter
 		extensions.each { |name, extension| extendedString += " #{name}=\"#{extension}\"" if extension != nil }
 		
 		write "<p>\n" if paragraph
-		write "<label for=\"#{id}\">#{label}:</label><br />\n" if !radio && label != nil
+		#write "<label for=\"#{id}\">#{label}:</label><br />\n" if !radio && label != nil
+		
+		gotList = !radio && label != nil
+		if gotList
+			write "<ul>\n"
+			#write "<li><label for=\"#{id}\">#{label}:</label></li>\n"
+			write "<li class=\"formLabel\">#{label}:</li>\n"
+			write "<li>\n"
+		end
+		
 		case type
 		when :input
 			if radio
@@ -80,6 +89,12 @@ class FormWriter
 			end
 			write "</select>\n"
 		end
+		
+		if gotList
+			write "</li>\n"
+			write "</ul>\n"
+		end
+		
 		write "</p>\n" if paragraph
 	end
 
