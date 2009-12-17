@@ -23,7 +23,7 @@ class HTMLWriter
 	end
 	
 	def p(arguments = {}, &block)
-		tag('p', arguments, block)
+		tag('p', arguments, block, true)
 	end
 	
 	def table(arguments = {}, &block)
