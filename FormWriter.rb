@@ -30,10 +30,12 @@ class FormWriter
 		paragraph = arguments[:paragraph] || true
 		radio = type == :radio
 		checked = arguments[:checked] || false
+		fieldClass = arguments[:class]
 		
 		if radio
 			type = :input
 			inputType = 'radio'
+			fieldClass = inputType
 		end
 		
 		if type == nil
@@ -42,8 +44,15 @@ class FormWriter
 		end
 		
 		extendedString = ''
-		extendedString += " value=\"#{value}\"" if value != nil
-		extendedString += " onclick=\"#{onClick}\"" if onClick != nil
+		
+		extensions =
+		[
+			['value', value],
+			['onclick', onClick],
+			['class', fieldClass],
+		]
+		
+		extensions.each { |name, extension| extendedString += " #{name}=\"#{extension}\"" if extension != nil }
 		
 		write "<p>\n" if paragraph
 		write "<label for=\"#{id}\">#{label}:</label><br />\n" if !radio && label != nil
