@@ -28,14 +28,16 @@ class FormWriter
 		type = arguments[:type] || :input
 		inputType = arguments[:inputType] || 'text'
 		name = arguments[:name] || getName(label)
-		id = arguments[:id] || name
+		id = arguments[:id]
 		value = arguments[:value]
 		options = arguments[:options]
 		onClick = arguments[:onClick]
-		paragraph = arguments[:paragraph] || true
+		paragraph = arguments[:paragraph] || false
 		radio = type == :radio
 		checked = arguments[:checked] || false
 		fieldClass = arguments[:class]
+		
+		id = name if id == nil && !radio
 		
 		if radio
 			type = :input
@@ -66,8 +68,8 @@ class FormWriter
 		
 		gotList = !radio && label != nil
 		if gotList
-			write "<ul>\n"
-			write "<li class=\"formLabel\">#{label}:</li>\n"
+			write "<ul class=\"formLabel\">\n"
+			write "<li>#{label}:</li>\n"
 			write "<li>\n"
 		end
 		
@@ -94,7 +96,7 @@ class FormWriter
 			end
 			write "</select>\n"
 		when :textarea
-			write "<textarea#{tagString}>#{value}</textarea>\n"
+			write "<textarea rows=\"10\" cols=\"30\" #{tagString}>#{value}</textarea>\n"
 		end
 		
 		if gotList
