@@ -18,11 +18,16 @@ class FormWriter
 		@output.concat text
 	end
 	
+	def getName(label)
+		return nil if label == nil
+		label.scan(/[A-Za-z]/).join('')
+	end
+	
 	def field(arguments = {})
 		label = arguments[:label]
 		type = arguments[:type] || :input
 		inputType = arguments[:inputType] || 'text'
-		name = arguments[:name] || label.downcase
+		name = arguments[:name] || getName(label)
 		id = arguments[:id] || name
 		value = arguments[:value]
 		options = arguments[:options]
@@ -43,24 +48,25 @@ class FormWriter
 			type = label.downcase.include?(passwordString) ? passwordString : 'text'
 		end
 		
-		extendedString = ''
-		
-		extensions =
+		additionalTags =
 		[
-			['value', value],
-			['onclick', onClick],
 			['class', fieldClass],
+			['name', name],
+			['id', id],
+			['onclick', onClick],
 		]
 		
-		extensions.each { |name, extension| extendedString += " #{name}=\"#{extension}\"" if extension != nil }
+		additionalTags << ['value', value] if type != :textarea
+		additionalTags << ['checked', 'checked'] if radio && checked
+		
+		tagString = ''
+		additionalTags.each { |name, extension| tagString += " #{name}=\"#{extension}\"" if extension != nil }
 		
 		write "<p>\n" if paragraph
-		#write "<label for=\"#{id}\">#{label}:</label><br />\n" if !radio && label != nil
 		
 		gotList = !radio && label != nil
 		if gotList
 			write "<ul>\n"
-			#write "<li><label for=\"#{id}\">#{label}:</label></li>\n"
 			write "<li class=\"formLabel\">#{label}:</li>\n"
 			write "<li>\n"
 		end
@@ -68,14 +74,13 @@ class FormWriter
 		case type
 		when :input
 			if radio
-				extendedString += ' checked="checked"' if checked
-				write "<input type=\"#{inputType}\" name=\"#{name}\"#{extendedString} /> #{label}\n"
+				write "<input type=\"#{inputType}\"#{tagString} /> #{label}\n"
 			else
-				write "<input type=\"#{inputType}\" id=\"#{id}\" name=\"#{name}\"#{extendedString} />\n"
+				write "<input type=\"#{inputType}\"#{tagString} />\n"
 			end
 		when :select
 			raise 'No options have been specified for a select statement.' if options == nil
-			write "<select id=\"#{id}\" name=\"#{name}\">\n"
+			write "<select#{tagString}>\n"
 			gotASelection = false
 			options.each do |option|
 				if option.selected
@@ -88,6 +93,8 @@ class FormWriter
 				write "<option value=\"#{option.value}\"#{selectedString}>#{option.description}</option>\n"
 			end
 			write "</select>\n"
+		when :textarea
+			write "<textarea#{tagString}>#{value}</textarea>\n"
 		end
 		
 		if gotList
@@ -96,6 +103,27 @@ class FormWriter
 		end
 		
 		write "</p>\n" if paragraph
+	end
+	
+	def text(arguments = {})
+		arguments[:type] = :input
+		field arguments
+	end
+	
+	def password(arguments = {})
+		arguments[:type] = :input
+		arguments[:inputType] = :password
+		field arguments
+	end
+	
+	def select(arguments = {})
+		arguments[:type] = :select
+		field arguments
+	end
+	
+	def textarea(arguments = {})
+		arguments[:type] = :textarea
+		field arguments
 	end
 
 	def submitButton(description = 'Submit')
