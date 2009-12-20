@@ -36,6 +36,7 @@ class FormWriter
 		radio = type == :radio
 		checked = arguments[:checked] || false
 		fieldClass = arguments[:class]
+		ulId = arguments[:ulId]
 		
 		id = name if id == nil && !radio
 		
@@ -68,7 +69,8 @@ class FormWriter
 		
 		gotList = !radio && label != nil
 		if gotList
-			write "<ul class=\"formLabel\">\n"
+			ulIdString = ulId == nil ? '' : " id=\"#{ulId}\""
+			write "<ul class=\"formLabel\"#{ulIdString}>\n"
 			write "<li>#{label}:</li>\n"
 			write "<li>\n"
 		end

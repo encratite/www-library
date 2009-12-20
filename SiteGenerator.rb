@@ -1,10 +1,23 @@
+class ScriptEntry
+	attr_reader :type, :source
+	def initialize(type, source)
+		@type = type
+		@source = source
+	end
+end
+
 class SiteGenerator
 	def initialize
 		@stylesheets = []
+		@scripts = []
 	end
 	
 	def addStylesheet(stylesheet)
 		@stylesheets << stylesheet
+	end
+	
+	def addScript(source, type = 'text/javascript')
+		@scripts << ScriptEntry.new(type, source)
 	end
 	
 	def head(title)
@@ -18,7 +31,11 @@ class SiteGenerator
 END
 
 		@stylesheets.each do |stylesheet|
-			output += "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"#{stylesheet}\" />\n"
+			output.concat "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"#{stylesheet}\" />\n"
+		end
+		
+		@scripts.each do |script|
+			output.concat "<script type=\"#{script.type}\" src=\"#{script.source}\" />\n"
 		end
 
 		output +=
