@@ -35,7 +35,7 @@ END
 		end
 		
 		@scripts.each do |script|
-			output.concat "<script type=\"#{script.type}\" src=\"#{script.source}\" />\n"
+			output.concat "<script type=\"#{script.type}\" src=\"#{script.source}\"></script>\n"
 		end
 
 		output +=

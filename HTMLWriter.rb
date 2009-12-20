@@ -7,7 +7,7 @@ class HTMLWriter
 		@output.concat text
 	end
 	
-	def tag(tag, arguments, block, useNewline = false)
+	def tag(tag, arguments, block, useNewline = true)
 		newline = "\n"
 		argumentString = ''
 		arguments.each { |key, value| argumentString += " #{key.to_s}=\"#{value}\"" }
@@ -19,19 +19,19 @@ class HTMLWriter
 	end
 	
 	def div(arguments = {}, &block)
-		tag('div', arguments, block, true)
+		tag('div', arguments, block)
 	end
 	
 	def p(arguments = {}, &block)
-		tag('p', arguments, block, true)
+		tag('p', arguments, block)
 	end
 	
 	def table(arguments = {}, &block)
-		tag('table', arguments, block, true)
+		tag('table', arguments, block)
 	end
 	
 	def tr(arguments = {}, &block)
-		tag('tr', arguments, block, true)
+		tag('tr', arguments, block)
 	end
 	
 	def td(arguments = {}, &block)
