@@ -5,6 +5,7 @@ class HTMLWriter
 	
 	def write(text)
 		@output.concat text
+		return nil
 	end
 	
 	def tag(tag, arguments, block, useNewline = true)
@@ -13,9 +14,11 @@ class HTMLWriter
 		arguments.each { |key, value| argumentString += " #{key.to_s}=\"#{value}\"" }
 		write "<#{tag}#{argumentString}>"
 		write newline if useNewline
-		block.call
+		data = block.call
+		write data if data.class == String
 		write "</#{tag}>"
 		write newline if useNewline
+		return nil
 	end
 	
 	def div(arguments = {}, &block)
@@ -24,6 +27,10 @@ class HTMLWriter
 	
 	def p(arguments = {}, &block)
 		tag('p', arguments, block)
+	end
+	
+	def b(arguments = {}, &block)
+		tag('b', arguments, block)
 	end
 	
 	def table(arguments = {}, &block)
