@@ -9,9 +9,10 @@ class SelectOption
 end
 
 class FormWriter
-	def initialize(output, action)
+	def initialize(output, action, onSubmit = nil)
 		@output = output
-		write "<form action=\"#{action}\" method=\"post\">\n"
+		onSubmit = " onsubmit=\"#{onSubmit}\"" if onSubmit != nil
+		write "<form action=\"#{action}\" method=\"post\"#{onSubmit}>\n"
 	end
 	
 	def write(text)
