@@ -29,6 +29,10 @@ class HTMLWriter
 		tag('p', arguments, block)
 	end
 	
+	def a(arguments = {}, &block)
+		tag('a', arguments, block)
+	end
+	
 	def b(arguments = {}, &block)
 		tag('b', arguments, block)
 	end

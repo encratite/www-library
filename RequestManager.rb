@@ -22,6 +22,25 @@ class RequestManager
 		@handlers << handler
 	end
 	
+	def getExceptionLine(exception)
+		data = exception.backtrace[0]
+		tokens = data.split ':'
+		drive = tokens[0]
+		if drive.length == 1
+			newTokens = tokens[1..-1]
+			first = newTokens[0]
+			first = drive + first
+			tokens = newTokens
+		end
+		path = tokens[0]
+		lineNumber = tokens[1].to_i - 1
+		file = File.new(path, 'r')
+		lines = file.readlines
+		file.close
+		line = lines[lineNumber].delete "\t"
+		return line
+	end
+	
 	def handleRequest(environment)
 		request = @requestClass.new environment
 		output = nil
@@ -60,7 +79,8 @@ class RequestManager
 			end
 		rescue => exception
 			if hasDebugPrivilege request
-				content = "An exception of type #{exception.class} occured:\n\n"
+				content = "An exception of type #{exception.class} occured:\n\t#{exception.message}\n\n"
+				content += "On the following line:\n\t" + getExceptionLine(exception) + "\n"
 				content += exception.backtrace.join "\n"
 			else
 				content = 'An internal server error occured.'
