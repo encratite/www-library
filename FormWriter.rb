@@ -25,6 +25,11 @@ class FormWriter
 	end
 	
 	def field(arguments = {})
+	
+		debug = lambda { puts "FUCK THIS: #{@output.scan(/<table/).length}" }
+		
+		debug.call
+		
 		label = arguments[:label]
 		type = arguments[:type] || :input
 		inputType = arguments[:inputType] || 'text'
@@ -33,11 +38,14 @@ class FormWriter
 		value = arguments[:value]
 		options = arguments[:options]
 		onClick = arguments[:onClick]
-		paragraph = arguments[:paragraph] || false
+		paragraph = arguments[:paragraph]
+		paragraph = true if paragraph == nil
 		radio = type == :radio
 		checked = arguments[:checked] || false
 		fieldClass = arguments[:class]
 		ulId = arguments[:ulId]
+		
+		puts "Field: #{type}"
 		
 		id = name if id == nil && !radio
 		
@@ -66,13 +74,15 @@ class FormWriter
 		tagString = ''
 		additionalTags.each { |name, extension| tagString += " #{name}=\"#{extension}\"" if extension != nil }
 		
+		gotList = !radio && label != nil
+		paragraph = false if gotList
+		
 		write "<p>\n" if paragraph
 		
-		gotList = !radio && label != nil
 		if gotList
 			ulIdString = ulId == nil ? '' : " id=\"#{ulId}\""
 			write "<ul class=\"formLabel\"#{ulIdString}>\n"
-			write "<li>#{label}:</li>\n"
+			write "<li>\n#{label}:\n</li>\n"
 			write "<li>\n"
 		end
 		
@@ -99,7 +109,7 @@ class FormWriter
 			end
 			write "</select>\n"
 		when :textarea
-			write "<textarea rows=\"10\" cols=\"30\" #{tagString}>#{value}</textarea>\n"
+			write "<textarea rows=\"10\" cols=\"30\"#{tagString}>#{value}</textarea>\n"
 		end
 		
 		if gotList
@@ -108,6 +118,8 @@ class FormWriter
 		end
 		
 		write "</p>\n" if paragraph
+		
+		debug.call
 	end
 	
 	def text(arguments = {})

@@ -1,51 +1,47 @@
 class HTMLWriter
 	def initialize(output)
 		@output = output
+		@lastCharacter = nil
 	end
 	
 	def write(text)
 		@output.concat text
+		@lastCharacter = text[-1]
 		return nil
 	end
 	
 	def tag(tag, arguments, block, useNewline = true)
 		newline = "\n"
+		writeNewline = lambda { write newline if useNewline }
 		argumentString = ''
 		arguments.each { |key, value| argumentString += " #{key.to_s}=\"#{value}\"" }
 		write "<#{tag}#{argumentString}>"
-		write newline if useNewline
+		writeNewline.call
 		data = block.call
 		write data if data.class == String
+		writeNewline.call if @lastCharacter != newline
 		write "</#{tag}>"
-		write newline if useNewline
+		writeNewline.call
 		return nil
 	end
 	
-	def div(arguments = {}, &block)
-		tag('div', arguments, block)
+	def self.createMethods(methods)
+		methods.each do |method|
+			send :define_method, method do |arguments = {}, &block|
+				tag(method, arguments, block)
+			end
+		end
 	end
 	
-	def p(arguments = {}, &block)
-		tag('p', arguments, block)
-	end
-	
-	def a(arguments = {}, &block)
-		tag('a', arguments, block)
-	end
-	
-	def b(arguments = {}, &block)
-		tag('b', arguments, block)
-	end
-	
-	def table(arguments = {}, &block)
-		tag('table', arguments, block)
-	end
-	
-	def tr(arguments = {}, &block)
-		tag('tr', arguments, block)
-	end
-	
-	def td(arguments = {}, &block)
-		tag('td', arguments, block)
-	end
+	self.createMethods [
+		'a',
+		'b',
+		'div',
+		'li',
+		'p',
+		'table',
+		'td',
+		'tr',
+		'ul',
+	]
 end
