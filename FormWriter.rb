@@ -25,11 +25,6 @@ class FormWriter
 	end
 	
 	def field(arguments = {})
-	
-		debug = lambda { puts "FUCK THIS: #{@output.scan(/<table/).length}" }
-		
-		#debug.call
-		
 		label = arguments[:label]
 		type = arguments[:type] || :input
 		inputType = arguments[:inputType] || 'text'
@@ -44,8 +39,6 @@ class FormWriter
 		checked = arguments[:checked] || false
 		fieldClass = arguments[:class]
 		ulId = arguments[:ulId]
-		
-		puts "Field: #{type}"
 		
 		id = name if id == nil && !radio
 		
@@ -119,7 +112,7 @@ class FormWriter
 		
 		write "</p>\n" if paragraph
 		
-		#debug.call
+		return nil
 	end
 	
 	def text(arguments = {})
