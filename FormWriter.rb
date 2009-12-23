@@ -28,7 +28,7 @@ class FormWriter
 	
 		debug = lambda { puts "FUCK THIS: #{@output.scan(/<table/).length}" }
 		
-		debug.call
+		#debug.call
 		
 		label = arguments[:label]
 		type = arguments[:type] || :input
@@ -119,7 +119,7 @@ class FormWriter
 		
 		write "</p>\n" if paragraph
 		
-		debug.call
+		#debug.call
 	end
 	
 	def text(arguments = {})
