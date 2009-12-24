@@ -126,6 +126,12 @@ class FormWriter
 		field arguments
 	end
 	
+	def hidden(arguments = {})
+		arguments[:type] = :input
+		arguments[:inputType] = :hidden
+		field arguments
+	end
+	
 	def select(arguments = {})
 		arguments[:type] = :select
 		field arguments
