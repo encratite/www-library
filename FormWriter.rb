@@ -141,6 +141,11 @@ class FormWriter
 		arguments[:type] = :textarea
 		field arguments
 	end
+	
+	def radio(arguments = {})
+		arguments[:type] = :radio
+		field arguments
+	end
 
 	def submitButton(description = 'Submit')
 		write "<p>\n<input type=\"submit\" value=\"#{description}\" />\n</p>\n"
