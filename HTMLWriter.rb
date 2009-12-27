@@ -24,6 +24,8 @@ class HTMLWriter
 		newline = "\n"
 		writeNewline = lambda { write newline if useNewline }
 		
+		addId arguments
+		
 		argumentString = ''
 		arguments.each { |key, value| argumentString += " #{key.to_s}=\"#{value}\"" }
 		if function == nil
@@ -46,6 +48,15 @@ class HTMLWriter
 				tag(method, arguments, block)
 			end
 		end
+	end
+	
+	def getName(label)
+		return nil if label == nil
+		label.scan(/[A-Za-z]/).join('')
+	end
+	
+	def addId(arguments)
+		arguments[:id] = getName arguments[:name] if arguments[:id] == nil
 	end
 	
 	def form(action, arguments = {}, &block)
