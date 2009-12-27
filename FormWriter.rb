@@ -1,3 +1,5 @@
+require 'site/HTMLWriter'
+
 class SelectOption
 	attr_reader :description, :value
 	attr_accessor :selected
@@ -8,15 +10,16 @@ class SelectOption
 	end
 end
 
-class FormWriter
-	def initialize(output, action, onSubmit = nil)
-		@output = output
-		onSubmit = " onsubmit=\"#{onSubmit}\"" if onSubmit != nil
-		write "<form action=\"#{action}\" method=\"post\"#{onSubmit}>\n"
-	end
-	
-	def write(text)
-		@output.concat text
+class FormWriter < HTMLWriter
+	def initialize(output, action, arguments = {}, &block)
+		super output
+		arguments[:method] = 'post'
+		arguments[:action] = action
+		function = lambda do
+			block.call
+			submitButton
+		end
+		tag('form', arguments, function)
 	end
 	
 	def getName(label)
@@ -151,12 +154,7 @@ class FormWriter
 		write "<p>\n<input type=\"submit\" value=\"#{description}\" />\n</p>\n"
 	end
 	
-	def endOfForm
-		write "</form>\n"
-	end
-	
-	def finish
+	def submit
 		submitButton
-		endOfForm
 	end
 end
