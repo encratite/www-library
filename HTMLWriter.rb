@@ -33,7 +33,7 @@ class HTMLWriter
 		else
 			write "<#{tag}#{argumentString}>"
 			writeNewline.call
-			data = block.call
+			data = function.call
 			write data if data.class == String
 			writeNewline.call if @lastCharacter != newline
 			write "</#{tag}>"
@@ -56,7 +56,7 @@ class HTMLWriter
 	end
 	
 	def addId(arguments)
-		arguments[:id] = getName arguments[:name] if arguments[:id] == nil
+		arguments[:id] = getName arguments[:name] if arguments[:name] != nil && arguments[:id] == nil
 	end
 	
 	def form(action, arguments = {}, &block)
@@ -66,7 +66,7 @@ class HTMLWriter
 	end
 	
 	def withLabel(label, &block)
-		ul class: formLabel do
+		ul class: 'formLabel' do
 			li { label }
 			li { block.call }
 		end
@@ -77,7 +77,7 @@ class HTMLWriter
 		arguments[:name] = name
 		arguments[:value] = value
 		
-		withLabel label { tag('input', arguments) }
+		withLabel(label) do tag('input', arguments) end
 	end
 	
 	def text(label, name, value = nil, arguments = {})
@@ -114,19 +114,19 @@ class HTMLWriter
 				if option.selected
 					raise 'You cannot specify more than one selected element in a <select> tag.' if gotASelection
 					gotASelection = true
-					current_arguments[:selected] = 'selected'
+					currentArguments[:selected] = 'selected'
 				end
-				option currentArguments { option.description }
+				option currentArguments do option.description end
 			end
 		end
 		arguments[:name] = name
 		tag('select', arguments, function)
 	end
 	
-	def textArea(name, value, arguments = {})
+	def textArea(label, name, value, arguments = {})
 		function = lambda { value }
 		arguments[:name] = name
-		tag('textarea', arguments, function)
+		withLabel label do tag('textarea', arguments, function) end
 	end
 	
 	def submit(description = 'Submit')
