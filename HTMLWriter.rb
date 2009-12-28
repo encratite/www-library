@@ -1,3 +1,5 @@
+require 'set'
+
 class SelectOption
 	attr_reader :description, :value
 	attr_accessor :selected
@@ -12,6 +14,7 @@ class HTMLWriter
 	def initialize(output)
 		@output = output
 		@lastCharacter = nil
+		@ids = Set.new
 	end
 	
 	def write(text)
@@ -20,11 +23,22 @@ class HTMLWriter
 		return nil
 	end
 	
-	def tag(tag, arguments, function = nil, useNewline = true)
+	def tag(tag, arguments, function = nil, addIdFromName = true, useNewline = true)
 		newline = "\n"
 		writeNewline = lambda { write newline if useNewline }
 		
-		addId arguments
+		id = arguments[:id]
+		name = arguments[:name]
+		if name != nil && id == nil
+			id = getName name
+			arguments[:id] = id
+		end
+		
+		if @ids.include?(id)
+			arguments[:id] = nil
+		elsif id != nil
+			@ids.add id
+		end
 		
 		argumentString = ''
 		arguments.each { |key, value| argumentString += " #{key.to_s}=\"#{value}\"" }
@@ -53,10 +67,6 @@ class HTMLWriter
 	def getName(label)
 		return nil if label == nil
 		label.scan(/[A-Za-z]/).join('')
-	end
-	
-	def addId(arguments)
-		arguments[:id] = getName arguments[:name] if arguments[:name] != nil && arguments[:id] == nil
 	end
 	
 	def form(action, arguments = {}, &block)
@@ -101,8 +111,9 @@ class HTMLWriter
 		arguments[:name] = name
 		arguments[:value] = value
 		arguments[:checked] = 'checked' if checked
+		arguments[:class] = 'radio' if arguments[:class] == nil
 		
-		tag('input', arguments, nil, false)
+		tag('input', arguments, nil, false, false)
 		write " #{label}\n"
 	end
 	
@@ -130,12 +141,15 @@ class HTMLWriter
 	end
 	
 	def submit(description = 'Submit')
-		arguments[:type] = 'submit'
-		arguments[:value] = description
+		arguments = {type: 'submit', value: description}
 		
 		p do
 			tag('input', arguments)
 		end
+	end
+	
+	def input(arguments = {})
+		tag('input', arguments)
 	end
 	
 	self.createMethods [
