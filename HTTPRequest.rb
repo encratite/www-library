@@ -1,7 +1,7 @@
 require 'cgi'
 
 class HTTPRequest
-	attr_reader :path, :pathString, :method, :accept, :address, :getInput, :postInput, :cookies, :environment
+	attr_reader :path, :pathString, :method, :accept, :address, :getInput, :postInput, :cookies, :environment, :agent
 	attr_accessor :arguments
 	
 	def initialize(environment)
@@ -41,6 +41,29 @@ class HTTPRequest
 		end
 		
 		@environment = environment
+		
+		@agent = getAgent environment
+	end
+	
+	def getAgent(environment)
+		agent = environment['HTTP_USER_AGENT']
+		return nil if agent == nil
+		
+		agents =
+		[
+			['Opera/', :opera],
+			['MSIE 6.0;', :ie6],
+			['MSIE 7.0;', :ie7],
+			['MSIE 8.0;', :ie8],
+			['Firefox/', :firefox],
+			['Chrome/', :chrome],
+		]
+		
+		agents.each do |string, symbol|
+			return symbol if agent.index(string) != nil
+		end
+		
+		return nil
 	end
 	
 	def self.tokenisePath(path)

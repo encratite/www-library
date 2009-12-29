@@ -11,10 +11,11 @@ class SelectOption
 end
 
 class HTMLWriter
-	def initialize(output)
+	def initialize(output, request = nil)
 		@output = output
 		@lastCharacter = nil
 		@ids = Set.new
+		@request = request
 	end
 	
 	def write(text)
@@ -35,7 +36,7 @@ class HTMLWriter
 		end
 		
 		if @ids.include?(id)
-			arguments[:id] = nil
+			arguments.delete :id
 		elsif id != nil
 			@ids.add id
 		end
@@ -65,7 +66,6 @@ class HTMLWriter
 	end
 	
 	def getName(label)
-		return nil if label == nil
 		label.scan(/[A-Za-z]/).join('')
 	end
 	
@@ -77,7 +77,7 @@ class HTMLWriter
 	
 	def withLabel(label, &block)
 		ul class: 'formLabel' do
-			li { label }
+			li { label + ':' }
 			li { block.call }
 		end
 	end
@@ -131,7 +131,14 @@ class HTMLWriter
 			end
 		end
 		arguments[:name] = name
-		tag('select', arguments, function)
+		tagFunction = lambda { tag('select', arguments, function) }
+		label = arguments[:label]
+		if label == nil
+			tagFunction.call
+		else
+			arguments.delete :label
+			withLabel label do tagFunction.call end
+		end
 	end
 	
 	def textArea(label, name, value, arguments = {})
@@ -140,11 +147,25 @@ class HTMLWriter
 		withLabel label do tag('textarea', arguments, function) end
 	end
 	
-	def submit(description = 'Submit')
-		arguments = {type: 'submit', value: description}
+	def submit(description = 'Submit', arguments = {})
+		arguments = {type: 'submit', value: description, class: 'submit'}
+		
+		function = lambda { tag('input', arguments) }
+		
+		needSpan = false
+		if @request != nil
+			agent = @request.agent
+			needSpan = agent == :ie6 || agent == :ie7
+		end
 		
 		p do
-			tag('input', arguments)
+			if needSpan
+				span do
+					function.call
+				end
+			else
+				function.call
+			end
 		end
 	end
 	
@@ -159,6 +180,7 @@ class HTMLWriter
 		'li',
 		'option',
 		'p',
+		'span',
 		'table',
 		'td',
 		'tr',
