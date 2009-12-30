@@ -19,8 +19,13 @@ class RequestHandler
 		end
 	end
 	
+	def getPath
+		return '/' + @path.join('/')
+	end
+	
 	def match(request)
 		path = request.path
+		#puts "Comparing #{path} to #{getPath}"
 		arguments = path[@path.size..-1]
 		if @path == path[0..(@path.size - 1)] && @argumentRange === arguments.size
 			request.arguments = arguments
