@@ -13,7 +13,7 @@ includes =
 includes.each { |name| require base + '/' + name }
 
 class RequestManager
-	class Exception
+	class Exception < Exception
 		attr_reader :content
 		
 		def initialize(content)
@@ -49,7 +49,7 @@ class RequestManager
 		return line
 	end
 	
-	def processOutput(output)
+	def processOutput(request, output)
 		case output
 		when NilClass
 			reply = HTTPReply.new "Unable to find \"#{request.pathString}\"."
@@ -76,6 +76,8 @@ class RequestManager
 			reply.plain
 			reply.error
 		end
+		
+		return reply
 	end
 	
 	def handleRequest(environment)
@@ -88,12 +90,12 @@ class RequestManager
 				break if output != nil
 			end
 		
-			processOutput output
+			reply = processOutput(request, output)
 			
 		rescue RequestManager::Exception => exception
-			processOutput exception.content
+			reply = processOutput(request, exception.content)
 			
-		else => exception
+		rescue => exception
 			if hasDebugPrivilege request
 				content = "An exception of type #{exception.class} occured:\n\t#{exception.message}\n\n"
 				content += "On the following line:\n\t" + getExceptionLine(exception) + "\n"
@@ -107,6 +109,6 @@ class RequestManager
 			reply.error
 		end
 		
-		reply.get
+		return reply.get
 	end
 end
