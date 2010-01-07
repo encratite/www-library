@@ -9,6 +9,7 @@ class HTTPReply
 		@replyCode = HTTPReplyCode::Ok
 		@content = content
 		@contentType = MIMEType::HTML
+		@fields = {}
 		@cookies = []
 	end
 	
@@ -34,14 +35,13 @@ class HTTPReply
 		@cookies << cookie
 	end
 	
+	def setField(field, value)
+		@fields[field] = value
+	end
+	
 	def get
-		fields =
-		{
-			'Content-Type' => @contentType,
-			'Content-Length' => @content.size.to_s
-		}
-		
-		
+		fields['Content-Type'] = @contentType,
+		fields['Content-Length'] = @content.size.to_s
 		fields['Set-Cookie'] = @cookies.map { |cookie| cookie.get } if !@cookies.empty?
 		
 		output =
@@ -51,6 +51,17 @@ class HTTPReply
 			[@content]
 		]
 		
-		output
+		return output
+	end
+	
+	def self.refer(url)
+		HTTPReply reply = HTTPReply.new ''
+		reply.replyCode = HTTPReplyCode::Found
+		reply.setField('Location', url)
+		return reply
+	end
+	
+	def self.localRefer(request, path)
+		return self.refer(request.urlBase + path)
 	end
 end

@@ -1,7 +1,7 @@
 require 'cgi'
 
 class HTTPRequest
-	attr_reader :path, :pathString, :method, :accept, :address, :getInput, :postInput, :cookies, :environment, :agent
+	attr_reader :path, :pathString, :method, :accept, :address, :getInput, :postInput, :cookies, :environment, :agent, :urlBase
 	attr_accessor :arguments
 	
 	def initialize(environment)
@@ -43,6 +43,8 @@ class HTTPRequest
 		@environment = environment
 		
 		@agent = getAgent environment
+		
+		@urlBase = environment['rack.url_scheme'] + '://' + environment['HTTP_HOST']
 	end
 	
 	def getAgent(environment)
