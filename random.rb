@@ -1,4 +1,4 @@
-class SessionString
+class RandomString
 	def self.createArray
 		output = []
 		targets =

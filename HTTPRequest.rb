@@ -69,17 +69,17 @@ class HTTPRequest
 	def self.tokenisePath(path)
 		tokens = path.split('/')
 		tokens.shift if path.size > 0 && path[0] == '/'
-		tokens
+		return tokens
 	end
 	
 	def getPost(name)
 		output = @postInput[name]
 		return nil if output == nil
-		output[0]
+		return output[0]
 	end
 	
 	def postIsSet(names)
 		names.each { |name| return false if @postInput[name] == nil }
-		true
+		return true
 	end
 end
