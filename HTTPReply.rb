@@ -40,14 +40,14 @@ class HTTPReply
 	end
 	
 	def get
-		fields['Content-Type'] = @contentType,
-		fields['Content-Length'] = @content.size.to_s
-		fields['Set-Cookie'] = @cookies.map { |cookie| cookie.get } if !@cookies.empty?
+		@fields['Content-Type'] = @contentType
+		@fields['Content-Length'] = @content.size.to_s
+		@fields['Set-Cookie'] = @cookies.map { |cookie| cookie.get } if !@cookies.empty?
 		
 		output =
 		[
 			@replyCode,
-			fields,
+			@fields,
 			[@content]
 		]
 		
@@ -55,7 +55,7 @@ class HTTPReply
 	end
 	
 	def self.refer(url)
-		HTTPReply reply = HTTPReply.new ''
+		reply = HTTPReply.new ''
 		reply.replyCode = HTTPReplyCode::Found
 		reply.setField('Location', url)
 		return reply
