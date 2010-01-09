@@ -7,7 +7,7 @@ includes =
 	'HTTPReplyCode',
 	'RequestHandler',
 	'MIMEType',
-	'debug'
+	'debug',
 ]
 
 includes.each { |name| require base + '/' + name }
@@ -36,17 +36,20 @@ class RequestManager
 		drive = tokens[0]
 		if drive.length == 1
 			newTokens = tokens[1..-1]
-			first = newTokens[0]
-			first = drive + first
+			newTokens[0] = drive + ':' + newTokens[0]
 			tokens = newTokens
 		end
 		path = tokens[0]
 		lineNumber = tokens[1].to_i - 1
-		file = File.new(path, 'r')
-		lines = file.readlines
-		file.close
-		line = lines[lineNumber].delete "\t"
-		return line
+		begin
+			file = File.new(path, 'r')
+			lines = file.readlines
+			file.close
+			line = lines[lineNumber].delete "\t"
+			return line
+		rescue Errno::ENOENT
+			return "<Unable to retrieve code>\n"
+		end
 	end
 	
 	def processOutput(request, output)
