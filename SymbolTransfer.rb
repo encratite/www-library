@@ -8,7 +8,7 @@ class SymbolTransfer
 	def translateSymbolName(name)
 		output = ''
 		isUpper = false
-		name.to_s.each do |char|
+		name.to_s.each_char do |char|
 			if char == '_'
 				isUpper = true
 				next
@@ -35,12 +35,12 @@ class SymbolTransfer
 			end
 			instance_variable_set(memberSymbol, value)
 			
-			send(:define_method, translatedSymbol) do
+			self.class.send(:define_method, translatedSymbol) do
 				return instance_variable_get(memberSymbol)
 			end
 			
 			operatorSymbol = (translatedSymbol.to_s + '=').to_sym
-			send(:define_method, operatorSymbol) do |value|
+			self.class.send(:define_method, operatorSymbol) do |value|
 				instance_variable_set(memberSymbol, value)
 			end
 		end
