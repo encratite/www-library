@@ -6,6 +6,7 @@ class HTTPReply
 	attr_accessor :replyCode, :contentType, :content
 	
 	def initialize(content)
+		raise "Invalid content class #{content.class} in a HTTP reply" if content.class != String
 		@replyCode = HTTPReplyCode::Ok
 		@content = content
 		@contentType = MIMEType::HTML

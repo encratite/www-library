@@ -21,15 +21,15 @@ class SymbolTransfer
 			
 			output += char
 		end
+		return output.to_sym
 	end
 
 	def transferSymbols(input, hash = {})
 		input.each do |symbol, value|
-			translatedSymbol = hash[symbol]
-			
-			translatedSymbol = translateSymbolName(symbol) if translatedSymbol == nil
-			
+			translatedSymbol = hash[symbol] || symbol
+			translatedSymbol = translateSymbolName translatedSymbol
 			memberSymbol = getMemberSymbol translatedSymbol
+			#puts "Translated #{symbol} to #{memberSymbol}"
 			if value.class == String
 				value = HTMLEntities::encode value
 			end
