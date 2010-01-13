@@ -29,9 +29,11 @@ class SymbolTransfer
 			translatedSymbol = hash[symbol] || symbol
 			translatedSymbol = translateSymbolName translatedSymbol
 			memberSymbol = getMemberSymbol translatedSymbol
-			#puts "Translated #{symbol} to #{memberSymbol}"
-			if value.class == String
+			case value
+			when String
 				value = HTMLEntities::encode value
+			when Time
+				value = value.utc
 			end
 			instance_variable_set(memberSymbol, value)
 			
