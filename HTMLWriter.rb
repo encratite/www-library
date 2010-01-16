@@ -141,7 +141,7 @@ class HTMLWriter
 		end
 	end
 	
-	def textArea(label, name, value, arguments = {})
+	def textArea(label, name, value = '', arguments = {})
 		function = lambda { value }
 		arguments[:name] = name
 		withLabel label do tag('textarea', arguments, function) end
