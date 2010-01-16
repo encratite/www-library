@@ -173,9 +173,14 @@ class HTMLWriter
 		tag('input', arguments)
 	end
 	
+	def col(arguments = {})
+		tag('col', arguments)
+	end
+	
 	self.createMethods [
 		'a',
 		'b',
+		'colgroup',
 		'div',
 		'li',
 		'option',
