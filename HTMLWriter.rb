@@ -66,7 +66,7 @@ class HTMLWriter
 	end
 	
 	def getName(label)
-		label.scan(/[A-Za-z]/).join('')
+		label.scan(/[A-Za-z0-9]/).join('')
 	end
 	
 	def form(action, arguments = {}, &block)
