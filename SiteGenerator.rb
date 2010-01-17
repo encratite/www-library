@@ -39,7 +39,7 @@ END
 			output.concat "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"#{stylesheet}\" />\n"
 		end
 		
-		@inlineStylesheets do |stylesheet|
+		@inlineStylesheets.each do |stylesheet|
 			output.concat <<END
 <style type="text/css" media="screen">
 /*<![CDATA[*/
@@ -53,8 +53,7 @@ END
 			output.concat "<script type=\"#{script.type}\" src=\"#{script.source}\"></script>\n"
 		end
 
-		output +=
-<<END
+		output.concat <<END
 <title>#{title}</title>
 </head>
 <body>
