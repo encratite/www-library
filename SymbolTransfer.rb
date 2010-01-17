@@ -24,14 +24,14 @@ class SymbolTransfer
 		return output.to_sym
 	end
 
-	def transferSymbols(input, hash = {})
+	def transferSymbols(input, hash = {}, entityExceptions = [])
 		input.each do |symbol, value|
 			translatedSymbol = hash[symbol] || symbol
 			translatedSymbol = translateSymbolName translatedSymbol
 			memberSymbol = getMemberSymbol translatedSymbol
 			case value
 			when String
-				value = HTMLEntities::encode value
+				value = HTMLEntities::encode(value) if !entityExceptions.include?(translatedSymbol)
 			when Time
 				value = value.utc
 			end
