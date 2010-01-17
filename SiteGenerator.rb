@@ -10,6 +10,7 @@ class SiteGenerator
 	def initialize
 		@stylesheets = []
 		@scripts = []
+		@inlineStylesheets = []
 	end
 	
 	def addStylesheet(stylesheet)
@@ -18,6 +19,10 @@ class SiteGenerator
 	
 	def addScript(source, type = 'text/javascript')
 		@scripts << ScriptEntry.new(type, source)
+	end
+	
+	def addInlineStylesheet(code)
+		@inlineStylesheets << code
 	end
 	
 	def head(title)
@@ -32,6 +37,16 @@ END
 
 		@stylesheets.each do |stylesheet|
 			output.concat "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"#{stylesheet}\" />\n"
+		end
+		
+		@inlineStylesheets do |stylesheet|
+			output.concat <<END
+<style type="text/css" media="screen">
+/*<![CDATA[*/
+#{stylesheet}
+/*]]>*/
+</style>
+END
 		end
 		
 		@scripts.each do |script|
