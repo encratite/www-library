@@ -100,9 +100,11 @@ class RequestManager
 			
 		rescue => exception
 			if hasDebugPrivilege request
-				content = "An exception of type #{exception.class} occured:\n\t#{exception.message}\n\n"
-				content += "On the following line:\n\t" + getExceptionLine(exception) + "\n"
-				content += exception.backtrace.join "\n"
+				content = "An exception of type #{exception.class} occured:\n\n"
+				content.concat "\t#{exception.message}\n\n"
+				content.concat "On the following line:\n"
+				content.concat "\t" + getExceptionLine(exception) + "\n"
+				content.concat exception.backtrace.join "\n"
 			else
 				content = 'An internal server error occured.'
 			end
