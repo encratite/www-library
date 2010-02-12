@@ -13,7 +13,7 @@ class RequestHandler
 		when Fixnum
 			@argumentRange = argumentCount..argumentCount
 		when Range
-			@argumentRange = argumetnCount
+			@argumentRange = argumentCount
 		else
 			raise "Invalid argument count type specified: #{argumentCount.class}"
 		end
