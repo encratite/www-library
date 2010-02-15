@@ -182,6 +182,7 @@ class HTMLWriter
 		'b',
 		'colgroup',
 		'div',
+		'i',
 		'li',
 		'option',
 		'p',
