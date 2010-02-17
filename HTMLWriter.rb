@@ -189,6 +189,7 @@ class HTMLWriter
 		'span',
 		'table',
 		'td',
+		'th',
 		'tr',
 		'ul',
 	]
