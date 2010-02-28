@@ -1,26 +1,29 @@
 require 'site/HTTPRequest'
 
 class RequestHandler
-	attr_reader :path, :handler
+	attr_reader :name, :isMenu, :menuDescription
 	
-	def initialize(path, handler, argumentCount = nil)
-		@path = HTTPRequest.tokenisePath(path)
-		@handler = handler
-		
-		case argumentCount
-		when NilClass
-			@argumentRange = 0..0
-		when Fixnum
-			@argumentRange = argumentCount..argumentCount
-		when Range
-			@argumentRange = argumentCount
-		else
-			raise "Invalid argument count type specified: #{argumentCount.class}"
-		end
+	NoArguments = 0..0
+	
+	def initialize(name)
+		@name = name
+		@isMenu = nil
+		@menuDescription = nil
+		@handler = nil
+		@argumentCount = NoArguments
+		@children = []
 	end
 	
-	def getPath
-		return '/' + @path.join('/')
+	def setHandler(handler, argumentCount = NoArguments)
+		@handler = handler
+		@argumentCount = argumentCount
+		return nil
+	end
+	
+	def self.menu(name, handler, argumentCount = NoArguments)
+		output = Requesthandler.new(name)
+		output.setHandler(handler, argumentCount)
+		return output
 	end
 	
 	def match(request)
