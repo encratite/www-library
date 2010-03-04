@@ -26,7 +26,12 @@ class RequestHandler
 		return output
 	end
 	
-	def match(request)
+	def add(newRequestHandler)
+		@children << newRequestHandler
+		return nil
+	end
+	
+	def match(request, path = request.path)
 		path = request.path
 		#puts "Comparing #{path} to #{getPath}"
 		arguments = path[@path.size..-1]
@@ -34,5 +39,22 @@ class RequestHandler
 			request.arguments = arguments
 			@handler.(request)
 		end
+		
+		path = request.path
+		
+		children.each do |child|
+			output = child.match(request, path)
+			return output if output != nil
+		end
+		
+		return nil if @handler == nil
+		
+		if path.empty?
+			return @handler.(request) if @name == nil
+			return nil
+		end
+		
+		target = path[0]
+		
 	end
 end
