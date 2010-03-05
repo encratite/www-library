@@ -28,6 +28,7 @@ class RequestManager
 	
 	def addHandler(handler)
 		@handlers << handler
+		return nil
 	end
 	
 	def getExceptionLine(exception)

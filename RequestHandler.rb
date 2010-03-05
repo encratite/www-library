@@ -33,14 +33,6 @@ class RequestHandler
 	
 	def match(request, path = request.path)
 		path = request.path
-		#puts "Comparing #{path} to #{getPath}"
-		arguments = path[@path.size..-1]
-		if @path == path[0..(@path.size - 1)] && @argumentRange === arguments.size
-			request.arguments = arguments
-			@handler.(request)
-		end
-		
-		path = request.path
 		
 		children.each do |child|
 			output = child.match(request, path)
@@ -55,6 +47,12 @@ class RequestHandler
 		end
 		
 		target = path[0]
+		arguments = path[1..-1]
+		if target == @name && @argumentRange === arguments.size
+			request.arguments = arguments
+			return @handler.(request)
+		end
 		
+		return nil
 	end
 end
