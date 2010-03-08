@@ -1,31 +1,38 @@
 require 'site/HTTPRequest'
 
 class RequestHandler
-	attr_reader :name, :isMenu, :menuDescription
+	attr_reader :name, :isMenu, :menuDescription, :menuCondition
 	
 	NoArguments = 0..0
 	TrueCondition = { |request| true }
 	
 	def initialize(name)
 		@name = name
-		@isMenu = nil
+		@isMenu = false
 		@menuDescription = nil
+		@menuCondition = TrueCondition
 		@handler = nil
 		@argumentCount = NoArguments
 		@children = []
-		@condition = TrueCondition
 	end
 	
-	def setHandler(handler, argumentCount = NoArguments, condition = TrueCondition)
+	def setHandler(handler, argumentCount = NoArguments)
 		@handler = handler
 		@argumentCount = argumentCount
-		@condition = condition
 		return nil
 	end
 	
-	def self.menu(name, handler, argumentCount = NoArguments, condition = TrueCondition)
+	def setMenuData(menuDescription, menuCondition)
+		@isMenu = true
+		@menuDescription = menuDescription
+		@menuCondition = menuCondition
+		return nil
+	end
+	
+	def self.menu(menuDescription, name, handler, argumentCount = NoArguments, menuCondition = TrueCondition)
 		output = Requesthandler.new(name)
-		output.setHandler(handler, argumentCount, condition)
+		output.setHandler(handler, argumentCount)
+		output.setMenuData(menuDescription, menuCondition)
 		return output
 	end
 	
@@ -34,28 +41,24 @@ class RequestHandler
 		return nil
 	end
 	
+	def getRemainingPath(path)
+		return path if @name == nil
+		return path[1..-1] if !path.empty? && @name == path[0]
+		return nil
+	end
+	
 	def match(request, path = request.path)
-		path = request.path
+		remainingPath = getRemainingPath(path)
+		return nil if remainingPath == nil
 		
 		children.each do |child|
-			output = child.match(request, path)
+			output = child.match(request, remainingPath)
 			return output if output != nil
 		end
 		
 		return nil if @handler == nil
 		
-		if path.empty?
-			return @handler.(request) if @name == nil
-			return nil
-		end
-		
-		target = path[0]
-		arguments = path[1..-1]
-		if target == @name && @argumentRange === arguments.size && @condition.(request)
-			request.arguments = arguments
-			return @handler.(request)
-		end
-		
-		return nil
+		request.arguments = remainingPath
+		return @handler.(request)
 	end
 end
