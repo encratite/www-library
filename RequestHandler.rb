@@ -4,6 +4,7 @@ class RequestHandler
 	attr_reader :name, :isMenu, :menuDescription
 	
 	NoArguments = 0..0
+	TrueCondition = { |request| true }
 	
 	def initialize(name)
 		@name = name
@@ -12,17 +13,19 @@ class RequestHandler
 		@handler = nil
 		@argumentCount = NoArguments
 		@children = []
+		@condition = TrueCondition
 	end
 	
-	def setHandler(handler, argumentCount = NoArguments)
+	def setHandler(handler, argumentCount = NoArguments, condition = TrueCondition)
 		@handler = handler
 		@argumentCount = argumentCount
+		@condition = condition
 		return nil
 	end
 	
-	def self.menu(name, handler, argumentCount = NoArguments)
+	def self.menu(name, handler, argumentCount = NoArguments, condition = TrueCondition)
 		output = Requesthandler.new(name)
-		output.setHandler(handler, argumentCount)
+		output.setHandler(handler, argumentCount, condition)
 		return output
 	end
 	
@@ -48,7 +51,7 @@ class RequestHandler
 		
 		target = path[0]
 		arguments = path[1..-1]
-		if target == @name && @argumentRange === arguments.size
+		if target == @name && @argumentRange === arguments.size && @condition.(request)
 			request.arguments = arguments
 			return @handler.(request)
 		end
