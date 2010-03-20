@@ -4,7 +4,7 @@ class RequestHandler
 	attr_reader :name, :isMenu, :menuDescription, :menuCondition
 	
 	NoArguments = 0..0
-	TrueCondition = { |request| true }
+	TrueCondition = lambda { |request| true }
 	
 	def initialize(name)
 		@name = name
@@ -30,7 +30,7 @@ class RequestHandler
 	end
 	
 	def self.menu(menuDescription, name, handler, argumentCount = NoArguments, menuCondition = TrueCondition)
-		output = Requesthandler.new(name)
+		output = RequestHandler.new(name)
 		output.setHandler(handler, argumentCount)
 		output.setMenuData(menuDescription, menuCondition)
 		return output
