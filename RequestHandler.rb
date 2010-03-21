@@ -2,6 +2,7 @@ require 'site/HTTPRequest'
 
 class RequestHandler
 	attr_reader :name, :isMenu, :menuDescription, :menuCondition
+	attr_accessor :manager, :handler, :parent
 	
 	NoArguments = 0..0
 	TrueCondition = lambda { |request| true }
@@ -14,6 +15,7 @@ class RequestHandler
 		@handler = nil
 		@argumentCount = NoArguments
 		@children = []
+		@parent = nil
 	end
 	
 	def setHandler(handler, argumentCount = NoArguments)
@@ -37,6 +39,7 @@ class RequestHandler
 	end
 	
 	def add(newRequestHandler)
+		newRequestHandler.parent = self
 		@children << newRequestHandler
 		return nil
 	end
@@ -60,5 +63,30 @@ class RequestHandler
 		
 		request.arguments = remainingPath
 		return @handler.(request)
+	end
+	
+	def getMenuStructure
+		return nil if @isMenu == false
+		output = MenuEntry.new(@name, @menuDescription, @menuCondition)
+		@children.each do |child|
+			subMenu = child.getMenuStructure
+			output.add(subMenu) if subMenu != nil
+		end
+		return output
+	end
+end
+
+class MenuEntry
+	attr_reader :description, :path, :condition, :children
+	
+	def initialize(path, description, condition)
+		@path = path
+		@description = description
+		@condition = condition
+		@children = []
+	end
+	
+	def add(child)
+		@children << child
 	end
 end

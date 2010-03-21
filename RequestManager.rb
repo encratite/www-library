@@ -91,7 +91,11 @@ class RequestManager
 		begin
 			@handlers.each do |handler|
 				output = handler.match request
-				break if output != nil
+				if output != nil
+					request.manager = self
+					request.handler = handler
+					break
+				end
 			end
 		
 			reply = processOutput(request, output)
@@ -116,5 +120,13 @@ class RequestManager
 		end
 		
 		return reply.get
+	end
+	
+	def getMenu
+		output = []
+		@handlers.each do |handler|
+			menuEntry = handler.getMenuStructure
+			output << menuEntry if menuEntry != nil
+		end
 	end
 end

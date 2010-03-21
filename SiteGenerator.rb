@@ -7,10 +7,11 @@ class ScriptEntry
 end
 
 class SiteGenerator
-	def initialize
+	def initialize(requestManager)
 		@stylesheets = []
 		@scripts = []
 		@inlineStylesheets = []
+		@requestManager = requestManager
 	end
 	
 	def addStylesheet(stylesheet)
