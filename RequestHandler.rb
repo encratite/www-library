@@ -51,7 +51,7 @@ class RequestHandler
 		remainingPath = getRemainingPath(path)
 		return nil if remainingPath == nil
 		
-		children.each do |child|
+		@children.each do |child|
 			output = child.match(request, remainingPath)
 			return output if output != nil
 		end
