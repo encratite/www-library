@@ -128,5 +128,6 @@ class RequestManager
 			menuEntry = handler.getMenuStructure
 			output << menuEntry if menuEntry != nil
 		end
+		return output
 	end
 end

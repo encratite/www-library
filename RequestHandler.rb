@@ -77,16 +77,18 @@ class RequestHandler
 end
 
 class MenuEntry
-	attr_reader :description, :path, :condition, :children
+	attr_accessor :path
+	attr_reader :description, :condition, :children
 	
 	def initialize(path, description, condition)
-		@path = path
+		@path = [path]
 		@description = description
 		@condition = condition
 		@children = []
 	end
 	
 	def add(child)
+		child.path = @path + child.path
 		@children << child
 	end
 end
