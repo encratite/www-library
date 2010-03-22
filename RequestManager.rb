@@ -86,12 +86,12 @@ class RequestManager
 	
 	def handleRequest(environment)
 		request = @requestConstructor.call environment
+		request.manager = self
+		
 		output = nil
 		
 		begin
 			@handlers.each do |handler|
-				request.manager = self
-				request.handler = handler
 				output = handler.match request
 				break if output != nil
 			end

@@ -45,7 +45,7 @@ class RequestHandler
 	end
 	
 	def getRemainingPath(path)
-		return path if @name == nil
+		return path if @name == nil && path.empty?
 		return path[1..-1] if !path.empty? && @name == path[0]
 		return nil
 	end
@@ -59,9 +59,10 @@ class RequestHandler
 			return output if output != nil
 		end
 		
-		return nil if @handler == nil
+		return nil if @handler == nil || !(@argumentCount === remainingPath.size)
 		
 		request.arguments = remainingPath
+		request.handler = self
 		return @handler.(request)
 	end
 	
