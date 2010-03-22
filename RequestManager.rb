@@ -90,12 +90,10 @@ class RequestManager
 		
 		begin
 			@handlers.each do |handler|
+				request.manager = self
+				request.handler = handler
 				output = handler.match request
-				if output != nil
-					request.manager = self
-					request.handler = handler
-					break
-				end
+				break if output != nil
 			end
 		
 			reply = processOutput(request, output)

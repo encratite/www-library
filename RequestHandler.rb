@@ -2,7 +2,7 @@ require 'site/HTTPRequest'
 
 class RequestHandler
 	attr_reader :name, :isMenu, :menuDescription, :menuCondition
-	attr_accessor :manager, :handler, :parent
+	attr_accessor :parent
 	
 	NoArguments = 0..0
 	TrueCondition = lambda { |request| true }
