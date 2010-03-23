@@ -122,9 +122,11 @@ class RequestManager
 	
 	def getMenu
 		output = []
-		@handlers.each do |handler|
-			menuEntry = handler.getMenuStructure
-			output << menuEntry if menuEntry != nil
+		@handlers.each { |handler| output += handler.getMenuStructure }
+		counter = 1
+		output.each do |item|
+			puts "#{counter}. #{item.inspect}"
+			counter += 1
 		end
 		return output
 	end

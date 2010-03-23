@@ -31,6 +31,12 @@ class RequestHandler
 		return nil
 	end
 	
+	def self.handler(name, handler, argumentCount = NoArguments)
+		output = RequestHandler.new(name)
+		output.setHandler(handler, argumentCount)
+		return output
+	end
+	
 	def self.menu(menuDescription, name, handler, argumentCount = NoArguments, menuCondition = TrueCondition)
 		output = RequestHandler.new(name)
 		output.setHandler(handler, argumentCount)
@@ -67,13 +73,21 @@ class RequestHandler
 	end
 	
 	def getMenuStructure
-		return nil if @isMenu == false
-		output = MenuEntry.new(@name, @menuDescription, @menuCondition)
-		@children.each do |child|
-			subMenu = child.getMenuStructure
-			output.add(subMenu) if subMenu != nil
+		if @isMenu == false
+			output = []
+			@children.each do |child|
+				subMenu = child.getMenuStructure
+				output += subMenu
+			end
+			return output
+		else
+			output = MenuEntry.new(@name, @menuDescription, @menuCondition)
+			@children.each do |child|
+				subMenu = child.getMenuStructure
+				output.add(subMenu) if subMenu != nil
+			end
+			return [output]
 		end
-		return output
 	end
 end
 
