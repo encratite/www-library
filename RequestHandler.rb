@@ -18,7 +18,8 @@ class RequestHandler
 		@parent = nil
 	end
 	
-	def setHandler(handler, argumentCount = NoArguments)
+	def setHandler(handler, argumentCount = nil)
+		argumentCount = NoArguments if argumentCount == nil
 		@handler = handler
 		@argumentCount = argumentCount
 		return nil
@@ -31,13 +32,13 @@ class RequestHandler
 		return nil
 	end
 	
-	def self.handler(name, handler, argumentCount = NoArguments)
+	def self.handler(name, handler, argumentCount = nil)
 		output = RequestHandler.new(name)
 		output.setHandler(handler, argumentCount)
 		return output
 	end
 	
-	def self.menu(menuDescription, name, handler, argumentCount = NoArguments, menuCondition = TrueCondition)
+	def self.menu(menuDescription, name, handler, argumentCount = nil, menuCondition = TrueCondition)
 		output = RequestHandler.new(name)
 		output.setHandler(handler, argumentCount)
 		output.setMenuData(menuDescription, menuCondition)
@@ -51,7 +52,7 @@ class RequestHandler
 	end
 	
 	def getRemainingPath(path)
-		return path if @name == nil && path.empty?
+		return path if @name == [] && path.empty?
 		return path[1..-1] if !path.empty? && @name == path[0]
 		return nil
 	end
@@ -73,6 +74,7 @@ class RequestHandler
 	end
 	
 	def getMenuStructure
+		puts "This node has #{@children.size} children"
 		if @isMenu == false
 			output = []
 			@children.each do |child|
@@ -96,7 +98,11 @@ class MenuEntry
 	attr_reader :description, :condition, :children
 	
 	def initialize(path, description, condition)
-		@path = [path]
+		if path.class == Array
+			@path = path
+		else
+			@path = [path]
+		end
 		@description = description
 		@condition = condition
 		@children = []
