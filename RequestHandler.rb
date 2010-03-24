@@ -1,4 +1,5 @@
 require 'site/HTTPRequest'
+require 'site/MenuEntry'
 
 class RequestHandler
 	attr_reader :name, :isMenu, :menuDescription, :menuCondition
@@ -52,7 +53,7 @@ class RequestHandler
 	end
 	
 	def getRemainingPath(path)
-		return path if @name == [] && path.empty?
+		return path if @name == nil && path.empty?
 		return path[1..-1] if !path.empty? && @name == path[0]
 		return nil
 	end
@@ -73,43 +74,24 @@ class RequestHandler
 		return @handler.(request)
 	end
 	
-	def getMenuStructure
-		puts "This node has #{@children.size} children"
+	def getMenuStructure(previousPath = [])
+		newPath = previousPath
+		newPath += [@name] if @name != nil
 		if @isMenu == false
 			output = []
 			@children.each do |child|
-				subMenu = child.getMenuStructure
+				subMenu = child.getMenuStructure newPath
 				output += subMenu
 			end
 			return output
 		else
-			output = MenuEntry.new(@name, @menuDescription, @menuCondition)
+			puts "New path: #{newPath}"
+			output = MenuEntry.new(newPath, @menuDescription, @menuCondition)
 			@children.each do |child|
-				subMenu = child.getMenuStructure
+				subMenu = child.getMenuStructure newPath
 				output.add(subMenu) if subMenu != nil
 			end
 			return [output]
 		end
-	end
-end
-
-class MenuEntry
-	attr_accessor :path
-	attr_reader :description, :condition, :children
-	
-	def initialize(path, description, condition)
-		if path.class == Array
-			@path = path
-		else
-			@path = [path]
-		end
-		@description = description
-		@condition = condition
-		@children = []
-	end
-	
-	def add(child)
-		child.path = @path + child.path
-		@children << child
 	end
 end
