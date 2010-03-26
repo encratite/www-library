@@ -85,7 +85,6 @@ class RequestHandler
 			end
 			return output
 		else
-			puts "New path: #{newPath}"
 			output = MenuEntry.new(newPath, @menuDescription, @menuCondition)
 			@children.each do |child|
 				subMenu = child.getMenuStructure newPath
