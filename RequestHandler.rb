@@ -106,7 +106,9 @@ class RequestHandler
 			output = MenuEntry.new(newPath, @menuDescription, @menuCondition)
 			@children.each do |child|
 				subMenu = child.getMenuStructure newPath
-				output.add(subMenu) if subMenu != nil
+				subMenu.each do |entry|
+					output.add(entry) if subMenu != nil
+				end
 			end
 			return [output]
 		end
