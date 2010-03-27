@@ -8,6 +8,8 @@ class RequestHandler
 	NoArguments = 0..0
 	TrueCondition = lambda { |request| true }
 	
+	@@bufferedObjects = []
+	
 	def initialize(name)
 		@name = name
 		@isMenu = false
@@ -19,8 +21,22 @@ class RequestHandler
 		@parent = nil
 	end
 	
+	def self.newBufferedObjectsGroup
+		@@bufferedObjects = []
+	end
+	
+	def self.getBufferedObjects
+		output = @@bufferedObjects
+		self.newBufferedObjectsGroup
+		return output
+	end
+	
 	def setHandler(handler, argumentCount = nil)
-		argumentCount = NoArguments if argumentCount == nil
+		if argumentCount == nil
+			argumentCount = NoArguments
+		elsif argumentCount.class == Fixnum
+			argumentCount = argumentCount..argumentCount
+		end
 		@handler = handler
 		@argumentCount = argumentCount
 		return nil
@@ -36,6 +52,7 @@ class RequestHandler
 	def self.handler(name, handler, argumentCount = nil)
 		output = RequestHandler.new(name)
 		output.setHandler(handler, argumentCount)
+		@@bufferedObjects << output
 		return output
 	end
 	
@@ -43,6 +60,7 @@ class RequestHandler
 		output = RequestHandler.new(name)
 		output.setHandler(handler, argumentCount)
 		output.setMenuData(menuDescription, menuCondition)
+		@@bufferedObjects << output
 		return output
 	end
 	
