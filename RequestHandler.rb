@@ -76,12 +76,15 @@ class RequestHandler
 		return nil
 	end
 	
-	def match(request, path = request.path)
+	def match(request, path = request.path, previousPath = [], menu = [])
+		newPath = previousPath
+		newPath += [@name] if @name != nil
 		remainingPath = getRemainingPath(path)
+		
 		return nil if remainingPath == nil
 		
 		@children.each do |child|
-			output = child.match(request, remainingPath)
+			output = child.match(request, remainingPath, newPath, menu.dup)
 			return output if output != nil
 		end
 		
@@ -89,13 +92,16 @@ class RequestHandler
 		
 		request.arguments = remainingPath
 		request.handler = self
+		if @isMenu
+			MenuEntry.new(newPath, @menuDescription, @menuCondition)
+		end
 		return @handler.(request)
 	end
 	
 	def getMenuStructure(previousPath = [])
 		newPath = previousPath
 		newPath += [@name] if @name != nil
-		if @isMenu == false
+		if !@isMenu
 			output = []
 			@children.each do |child|
 				subMenu = child.getMenuStructure newPath
