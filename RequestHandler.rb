@@ -76,15 +76,12 @@ class RequestHandler
 		return nil
 	end
 	
-	def match(request, path = request.path, previousPath = [], menu = [])
-		newPath = previousPath
-		newPath += [@name] if @name != nil
+	def match(request, path = request.path)
 		remainingPath = getRemainingPath(path)
-		
 		return nil if remainingPath == nil
 		
 		@children.each do |child|
-			output = child.match(request, remainingPath, newPath, menu.dup)
+			output = child.match(request, remainingPath)
 			return output if output != nil
 		end
 		
@@ -92,31 +89,34 @@ class RequestHandler
 		
 		request.arguments = remainingPath
 		request.handler = self
-		if @isMenu
-			MenuEntry.new(newPath, @menuDescription, @menuCondition)
-		end
 		return @handler.(request)
 	end
 	
-	def getMenuStructure(previousPath = [])
-		newPath = previousPath
-		newPath += [@name] if @name != nil
-		if !@isMenu
-			output = []
-			@children.each do |child|
-				subMenu = child.getMenuStructure newPath
-				output += subMenu
-			end
-			return output
-		else
-			output = MenuEntry.new(newPath, @menuDescription, @menuCondition)
-			@children.each do |child|
-				subMenu = child.getMenuStructure newPath
-				subMenu.each do |entry|
-					output.add(entry) if subMenu != nil
-				end
-			end
-			return [output]
+	def getSubMenu(previousPath)
+		previousPath << @name if @name != nil
+		output = []
+		@children.each do |child|
+			next if !child.isMenu
+			output << MenuEntry.new(previousPath + child.name, child.menuDescription, child.menuCondition)
 		end
+		return output
+	end
+	
+	def getRoot
+		root = self
+		while true
+			return root if root.parent == nil
+			root = root.parent
+		end
+	end
+	
+	def getMenu
+		previousPath = []
+		output = []
+		currentHandler = getRoot
+		begin
+			output << currentHandler.getSubMenu previousPath
+		end while currentHandler != self
+		return output
 	end
 end
