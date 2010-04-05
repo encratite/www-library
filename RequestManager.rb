@@ -119,10 +119,4 @@ class RequestManager
 		
 		return reply.get
 	end
-	
-	def getMenu
-		output = []
-		@handlers.each { |handler| output += handler.getMenuStructure }
-		return output
-	end
 end
