@@ -115,8 +115,8 @@ class RequestHandler
 		output = []
 		currentHandler = getRoot
 		begin
-			output << currentHandler.getSubMenu previousPath
-		end while currentHandler != self
+			output << currentHandler.getSubMenu(previousPath)
+		end until currentHandler == self
 		return output
 	end
 end

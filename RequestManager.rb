@@ -1,16 +1,9 @@
-base = 'site'
-
-includes =
-[
-	'HTTPRequest',
-	'HTTPReply',
-	'HTTPReplyCode',
-	'RequestHandler',
-	'MIMEType',
-	'debug',
-]
-
-includes.each { |name| require base + '/' + name }
+require 'site/HTTPRequest'
+require 'site/HTTPReply'
+require 'site/HTTPReplyCode'
+require 'site/RequestHandler'
+require 'site/MIMEType'
+require 'site/debug'
 
 class RequestManager
 	class Exception < Exception
@@ -21,7 +14,10 @@ class RequestManager
 		end
 	end
 	
-	def initialize(requestConstructor = lambda { |environment| HTTPRequest.new environment } )
+	DefaultRequestClass = HTTPRequest
+	DefaultConstructor = lambda { |environment| DefaultRequestClass.new environment }
+	
+	def initialize(requestConstructor = DefaultConstructor)
 		@handlers = []
 		@requestConstructor = requestConstructor
 	end
@@ -85,12 +81,13 @@ class RequestManager
 	end
 	
 	def handleRequest(environment)
-		request = @requestConstructor.call environment
-		request.manager = self
-		
-		output = nil
-		
 		begin
+			request = nil
+			request = @requestConstructor.call environment
+			request.manager = self
+		
+			output = nil
+
 			@handlers.each do |handler|
 				output = handler.match request
 				break if output != nil
@@ -102,6 +99,7 @@ class RequestManager
 			reply = processOutput(request, exception.content)
 			
 		rescue => exception
+			request = DefaultConstructor.call environment if request == nil
 			if hasDebugPrivilege request
 				content = "An exception of type #{exception.class} occured:\n\n"
 				content.concat "\t#{exception.message}\n\n"
