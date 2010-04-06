@@ -104,6 +104,7 @@ class RequestHandler
 		output = []
 		@children.each do |child|
 			next if !child.isMenu
+			puts "Adding #{child.menuDescription}"
 			output << MenuEntry.new(previousPath + [child.name], child.menuDescription, child.menuCondition)
 		end
 		puts "getSubMenu: #{previousPath.inspect} -> #{output.size}"
