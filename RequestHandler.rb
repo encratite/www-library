@@ -97,26 +97,30 @@ class RequestHandler
 		output = []
 		@children.each do |child|
 			next if !child.isMenu
-			output << MenuEntry.new(previousPath + child.name, child.menuDescription, child.menuCondition)
+			output << MenuEntry.new(previousPath + [child.name], child.menuDescription, child.menuCondition)
 		end
 		return output
 	end
 	
-	def getRoot
-		root = self
+	def getParents
+		output = []
+		currentHandler = self
 		while true
-			return root if root.parent == nil
-			root = root.parent
+			break if currentHandler.parent == nil
+			output << currentHandler
+			currentHandler = currentHandler.parent
 		end
+		return output.reverse
 	end
 	
 	def getMenu
 		previousPath = []
 		output = []
-		currentHandler = getRoot
-		begin
-			output << currentHandler.getSubMenu(previousPath)
-		end until currentHandler == self
+		handlers = getParents
+		handlers.each do |handler|
+			output << handler.getSubMenu(previousPath)
+			break if handler == self
+		end
 		return output
 	end
 end

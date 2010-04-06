@@ -84,7 +84,6 @@ class RequestManager
 		begin
 			request = nil
 			request = @requestConstructor.call environment
-			request.manager = self
 		
 			output = nil
 
