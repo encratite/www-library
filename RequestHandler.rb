@@ -5,6 +5,9 @@ class RequestHandler
 	attr_reader :name, :isMenu, :menuDescription, :menuCondition
 	attr_accessor :parent
 	
+	#debugging
+	attr_reader :children
+	
 	NoArguments = 0..0
 	TrueCondition = lambda { |request| true }
 	
@@ -92,6 +95,10 @@ class RequestHandler
 		return @handler.(request)
 	end
 	
+	def description
+		return "#{@name.inspect} -> #{@parent == nil ? 'no parent' : @parent.name.inspect}, children: #{@children.size}"
+	end
+	
 	def getSubMenu(previousPath)
 		previousPath << @name if @name != nil
 		output = []
@@ -99,15 +106,18 @@ class RequestHandler
 			next if !child.isMenu
 			output << MenuEntry.new(previousPath + [child.name], child.menuDescription, child.menuCondition)
 		end
+		puts "getSubMenu: #{previousPath.inspect} -> #{output.size}"
 		return output
 	end
 	
 	def getParents
 		output = []
 		currentHandler = self
+		puts "Parents:"
 		while true
-			break if currentHandler.parent == nil
+			puts currentHandler.description
 			output << currentHandler
+			break if currentHandler.parent == nil
 			currentHandler = currentHandler.parent
 		end
 		return output.reverse
@@ -118,7 +128,9 @@ class RequestHandler
 		output = []
 		handlers = getParents
 		handlers.each do |handler|
-			output << handler.getSubMenu(previousPath)
+			puts "Calling getSubMenu for #{handler.description}"
+			menu = handler.getSubMenu(previousPath)
+			output << menu if !menu.empty?
 			break if handler == self
 		end
 		return output
