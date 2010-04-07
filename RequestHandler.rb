@@ -60,6 +60,7 @@ class RequestHandler
 	end
 	
 	def self.menu(menuDescription, name, handler, argumentCount = nil, menuCondition = TrueCondition)
+		puts 'menu!'
 		output = RequestHandler.new(name)
 		output.setHandler(handler, argumentCount)
 		output.setMenuData(menuDescription, menuCondition)
@@ -70,6 +71,10 @@ class RequestHandler
 	def add(newRequestHandler)
 		newRequestHandler.parent = self
 		@children << newRequestHandler
+		puts "Added: #{newRequestHandler.menuDescription}"
+		@children.each do |child|
+			#puts child.menuDescription
+		end
 		return nil
 	end
 	
@@ -104,19 +109,19 @@ class RequestHandler
 		output = []
 		@children.each do |child|
 			next if !child.isMenu
-			puts "Adding #{child.menuDescription}"
+			#puts "Adding #{child.menuDescription}"
 			output << MenuEntry.new(previousPath + [child.name], child.menuDescription, child.menuCondition)
 		end
-		puts "getSubMenu: #{previousPath.inspect} -> #{output.size}"
+		#puts "getSubMenu: #{previousPath.inspect} -> #{output.size}"
 		return output
 	end
 	
 	def getParents
 		output = []
 		currentHandler = self
-		puts "Parents:"
+		#puts "Parents:"
 		while true
-			puts currentHandler.description
+			#puts currentHandler.description
 			output << currentHandler
 			break if currentHandler.parent == nil
 			currentHandler = currentHandler.parent
@@ -129,7 +134,7 @@ class RequestHandler
 		output = []
 		handlers = getParents
 		handlers.each do |handler|
-			puts "Calling getSubMenu for #{handler.description}"
+			#puts "Calling getSubMenu for #{handler.description}"
 			menu = handler.getSubMenu(previousPath)
 			output << menu if !menu.empty?
 			break if handler == self
