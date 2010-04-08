@@ -18,8 +18,12 @@ class HTTPRequest
 		@method = requestMethods[environment['REQUEST_METHOD']]
 		
 		@accept = []
-		environment['HTTP_ACCEPT'].split(', ').each do |token|
-			@accept << token.split(';')[0]
+		#puts environment.inspect
+		accept = environment['HTTP_ACCEPT']
+		if accept != nil
+			accept.split(', ').each do |token|
+				@accept << token.split(';')[0]
+			end
 		end
 		
 		@address = environment['REMOTE_ADDR']
