@@ -1,5 +1,6 @@
 require 'site/HTTPRequest'
 require 'site/MenuEntry'
+require 'site/string'
 
 class RequestHandler
 	attr_reader :name, :isMenu, :menuDescription, :menuCondition
@@ -127,5 +128,10 @@ class RequestHandler
 			break if handler == self
 		end
 		return output
+	end
+	
+	def getPath(*arguments)
+		elements = getParents.map { |handler| handler.name }.compact + arguments
+		return slashify elements
 	end
 end

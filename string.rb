@@ -8,3 +8,8 @@ def extractString(input, left, right)
 	output = input[offset1..offset2]
 	return output
 end
+
+def slashify(input)
+	separator = '/'
+	return separator + input.join(separator)
+end
