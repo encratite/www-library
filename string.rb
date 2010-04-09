@@ -13,3 +13,34 @@ def slashify(input)
 	separator = '/'
 	return separator + input.join(separator)
 end
+
+def getSizeString(size)
+	fullBytesStringMode = false
+	
+	sizeStrings =
+	[
+		'B',
+		'KiB',
+		'MiB',
+		'GiB'
+	]
+	
+	factor = 1024.0
+	
+	offset = 0
+	while offset < sizeStrings.size && size >= factor
+		size /= factor
+		offset += 1
+	end
+	
+	unit = sizeStrings[offset]
+	
+	if offset == 0
+		unit = 'byte' if fullBytesStringMode
+		output = "#{size} #{unit}"
+		output += 's' if size > 1 && fullBytesStringMode
+		return output
+	else
+		return sprintf('%.1f %s', size, unit)
+	end
+end
