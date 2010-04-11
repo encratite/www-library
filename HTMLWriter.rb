@@ -11,8 +11,14 @@ class SelectOption
 end
 
 class HTMLWriter
-	def initialize(output, request = nil)
-		@output = output
+	attr_reader :output
+	
+	def initialize(output = nil, request = nil)
+		if output == nil
+			@output = ''
+		else
+			@output = output
+		end
 		@lastCharacter = nil
 		@ids = Set.new
 		@request = request
