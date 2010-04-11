@@ -26,7 +26,7 @@ class HTTPRequest
 			end
 		end
 		
-		@address = environment['REMOTE_ADDR']
+		@address = environment['HTTP_X_REAL_IP']
 		
 		@getInput = CGI::parse(environment['QUERY_STRING'])
 		@postInput = CGI::parse(environment['rack.input'].read())
@@ -49,6 +49,7 @@ class HTTPRequest
 		@agent = getAgent environment
 		
 		@urlBase = environment['rack.url_scheme'] + '://' + environment['HTTP_HOST']
+		#puts "urlBase: #{@urlBase}"
 	end
 	
 	def getAgent(environment)
