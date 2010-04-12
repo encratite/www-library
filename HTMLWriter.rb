@@ -65,8 +65,10 @@ class HTMLWriter
 	
 	def self.createMethods(methods)
 		methods.each do |method|
+			useNewline = method.class != Array
+			method = method[0] if !useNewline
 			send :define_method, method do |arguments = {}, &block|
-				tag(method, arguments, block)
+				tag(method, arguments, block, true, useNewline)
 			end
 		end
 	end
@@ -183,15 +185,16 @@ class HTMLWriter
 		tag('col', arguments)
 	end
 	
+	#the tags marked as arrays don't produce newlines
 	self.createMethods [
 		'a',
-		'b',
+		['b'],
 		'colgroup',
 		'div',
-		'i',
+		['i'],
 		'li',
 		'option',
-		'p',
+		['p'],
 		'span',
 		'table',
 		'td',
