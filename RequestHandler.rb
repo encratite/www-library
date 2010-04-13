@@ -1,6 +1,8 @@
 require 'site/HTTPRequest'
 require 'site/MenuEntry'
 require 'site/string'
+require 'site/RequestManager'
+require 'site/MIMEType'
 
 class RequestHandler
 	attr_reader :name, :isMenu, :menuDescription, :menuCondition
@@ -78,17 +80,21 @@ class RequestHandler
 	end
 	
 	def match(request, path = request.path)
-		remainingPath = getRemainingPath(path)
-		return nil if remainingPath == nil
+		arguments = getRemainingPath(path)
+		return nil if arguments == nil
 		
 		@children.each do |child|
-			output = child.match(request, remainingPath)
+			output = child.match(request, arguments)
 			return output if output != nil
 		end
 		
-		return nil if @handler == nil || !(@argumentCount === remainingPath.size)
+		return nil if @handler == nil
 		
-		request.arguments = remainingPath
+		if !(@argumentCount === arguments.size)
+			message = 'Invalid argument count.'
+			raise RequestManager::Exception.new([MIMEType::Plain, message])
+		end
+		request.arguments = arguments
 		request.handler = self
 		return @handler.(request)
 	end
