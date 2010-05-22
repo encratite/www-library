@@ -1,7 +1,7 @@
 require 'cgi'
 
 class HTTPRequest
-	attr_reader :path, :pathString, :method, :accept, :address, :getInput, :postInput, :cookies, :environment, :agent, :urlBase
+	attr_reader :path, :pathString, :method, :accept, :address, :getInput, :rawInput, :postInput, :cookies, :environment, :agent, :urlBase
 	attr_accessor :arguments, :handler
 	
 	def initialize(environment)
@@ -18,7 +18,6 @@ class HTTPRequest
 		@method = requestMethods[environment['REQUEST_METHOD']]
 		
 		@accept = []
-		#puts environment.inspect
 		accept = environment['HTTP_ACCEPT']
 		if accept != nil
 			accept.split(', ').each do |token|
@@ -29,7 +28,8 @@ class HTTPRequest
 		@address = environment['HTTP_X_REAL_IP']
 		
 		@getInput = CGI::parse(environment['QUERY_STRING'])
-		@postInput = CGI::parse(environment['rack.input'].read())
+		@rawInput = environment['rack.input'].read
+		@postInput = CGI::parse(@rawInput)
 		
 		@cookies = {}
 		cookies = environment['HTTP_COOKIE']
@@ -49,7 +49,6 @@ class HTTPRequest
 		@agent = getAgent environment
 		
 		@urlBase = environment['rack.url_scheme'] + '://' + environment['HTTP_HOST']
-		#puts "urlBase: #{@urlBase}"
 	end
 	
 	def getAgent(environment)

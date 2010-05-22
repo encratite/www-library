@@ -14,12 +14,9 @@ class RequestManager
 		end
 	end
 	
-	DefaultRequestClass = HTTPRequest
-	DefaultConstructor = lambda { |environment| DefaultRequestClass.new environment }
-	
-	def initialize(requestConstructor = DefaultConstructor)
+	def initialize(requestClass = HTTPRequest)
 		@handlers = []
-		@requestConstructor = requestConstructor
+		@requestClass = requestClass
 	end
 	
 	def addHandler(handler)
@@ -83,7 +80,7 @@ class RequestManager
 	def handleRequest(environment)
 		begin
 			request = nil
-			request = @requestConstructor.call environment
+			request = @requestClass.new(environment)
 		
 			output = nil
 
