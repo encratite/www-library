@@ -1,8 +1,8 @@
-require 'site/HTTPRequest'
-require 'site/MenuEntry'
-require 'site/string'
-require 'site/RequestManager'
-require 'site/MIMEType'
+require 'www-library/HTTPRequest'
+require 'www-library/MenuEntry'
+require 'www-library/string'
+require 'www-library/RequestManager'
+require 'www-library/MIMEType'
 
 class RequestHandler
 	attr_reader :name, :isMenu, :menuDescription, :menuCondition

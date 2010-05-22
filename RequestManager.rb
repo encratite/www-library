@@ -1,9 +1,9 @@
-require 'site/HTTPRequest'
-require 'site/HTTPReply'
-require 'site/HTTPReplyCode'
-require 'site/RequestHandler'
-require 'site/MIMEType'
-require 'site/debug'
+require 'www-library/HTTPRequest'
+require 'www-library/HTTPReply'
+require 'www-library/HTTPReplyCode'
+require 'www-library/RequestHandler'
+require 'www-library/MIMEType'
+require 'www-library/debug'
 
 class RequestManager
 	class Exception < Exception

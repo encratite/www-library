@@ -1,4 +1,4 @@
-require 'site/HTML'
+require 'www-library/HTML'
 
 class SymbolTransfer
 	def getMemberSymbol(symbol)

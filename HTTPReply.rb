@@ -1,6 +1,6 @@
-require 'site/HTTPReplyCode'
-require 'site/MIMEType'
-require 'site/Cookie'
+require 'www-library/HTTPReplyCode'
+require 'www-library/MIMEType'
+require 'www-library/Cookie'
 
 class HTTPReply
 	attr_accessor :replyCode, :contentType, :content
