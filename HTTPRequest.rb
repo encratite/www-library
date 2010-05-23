@@ -4,6 +4,8 @@ class HTTPRequest
 	attr_reader :path, :pathString, :method, :accept, :address, :getInput, :rawInput, :postInput, :cookies, :environment, :agent, :urlBase
 	attr_accessor :arguments, :handler
 	
+	UTF8BOM = "\xEF\xBB\xBF"
+	
 	def initialize(environment)
 		@pathString = environment['REQUEST_PATH']
 		pathTokens = HTTPRequest.tokenisePath @pathString
@@ -26,9 +28,14 @@ class HTTPRequest
 		end
 		
 		@address = environment['HTTP_X_REAL_IP']
+		#workaround for non-proxied access
+		if @address == nil
+			@address = environment['REMOTE_ADDR']
+		end
 		
 		@getInput = CGI::parse(environment['QUERY_STRING'])
 		@rawInput = environment['rack.input'].read
+		processInput
 		@postInput = CGI::parse(@rawInput)
 		
 		@cookies = {}
@@ -48,7 +55,20 @@ class HTTPRequest
 		
 		@agent = getAgent environment
 		
-		@urlBase = environment['rack.url_scheme'] + '://' + environment['HTTP_HOST']
+		scheme = environment['rack.url_scheme']
+		post = environment['HTTP_HOST']
+		if post == nil
+			#dumb hack
+			post = '127.0.0.1'
+		end
+		@urlBase = scheme + '://' + post
+	end
+	
+	def processInput
+		#remove the UTF8 BOM (possibly requires force_encoding)
+		if @rawInput.size > UTF8BOM.size && @rawInput[0..(UTF8BOM.size - 1)] == UTF8BOM
+			@rawInput = @rawInput[UTF8BOM.size..-1]
+		end
 	end
 	
 	def getAgent(environment)

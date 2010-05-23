@@ -77,6 +77,15 @@ class RequestManager
 		return reply
 	end
 	
+	def getDebugMessage(exception)
+		debugMessage = "An exception of type #{exception.class} occured:\n\n"
+		debugMessage.concat "\t#{exception.message}\n\n"
+		debugMessage.concat "On the following line:\n"
+		debugMessage.concat "\t" + getExceptionLine(exception) + "\n"
+		debugMessage.concat exception.backtrace.join "\n"
+		return debugMessage
+	end
+	
 	def handleRequest(environment)
 		begin
 			request = nil
@@ -95,13 +104,10 @@ class RequestManager
 			reply = processOutput(request, exception.content)
 			
 		rescue => exception
-			request = DefaultConstructor.call environment if request == nil
+			request = HTTPRequest.new(environment) if request == nil
+			
 			if hasDebugPrivilege request
-				content = "An exception of type #{exception.class} occured:\n\n"
-				content.concat "\t#{exception.message}\n\n"
-				content.concat "On the following line:\n"
-				content.concat "\t" + getExceptionLine(exception) + "\n"
-				content.concat exception.backtrace.join "\n"
+				content = getDebugMessage exception
 			else
 				content = 'An internal server error occured.'
 			end
