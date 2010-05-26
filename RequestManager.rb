@@ -86,6 +86,24 @@ class RequestManager
 		return debugMessage
 	end
 	
+	def processError(request, environment, exception)
+		request = HTTPRequest.new(environment) if request == nil
+			
+		if hasDebugPrivilege request
+			content = getDebugMessage exception
+		else
+			content = 'An internal server error occured.'
+		end
+		
+		puts content
+		
+		reply = HTTPReply.new content
+		reply.plain
+		reply.error
+		
+		return reply
+	end
+	
 	def handleRequest(environment)
 		begin
 			request = nil
@@ -103,20 +121,18 @@ class RequestManager
 		rescue RequestManager::Exception => exception
 			reply = processOutput(request, exception.content)
 			
+		rescue RuntimeError => exception
+			reply = processError(request, environment, exception)
+			
+		rescue Exception => exception
+			reply = processError(request, environment, exception)
+			
 		rescue => exception
-			request = HTTPRequest.new(environment) if request == nil
+			reply = processError(request, environment, exception)
 			
-			if hasDebugPrivilege request
-				content = getDebugMessage exception
-			else
-				content = 'An internal server error occured.'
-			end
-			
-			reply = HTTPReply.new content
-			reply.plain
-			reply.error
 		end
 		
-		return reply.get
+		output = reply.get
+		return output
 	end
 end
