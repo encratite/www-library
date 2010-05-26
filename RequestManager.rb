@@ -88,14 +88,16 @@ class RequestManager
 	
 	def processError(request, environment, exception)
 		request = HTTPRequest.new(environment) if request == nil
+		
+		fullOutput = getDebugMessage(exception)
 			
 		if hasDebugPrivilege request
-			content = getDebugMessage exception
+			content = fullOutput
 		else
 			content = 'An internal server error occured.'
 		end
 		
-		puts content
+		puts fullOutput
 		
 		reply = HTTPReply.new content
 		reply.plain
