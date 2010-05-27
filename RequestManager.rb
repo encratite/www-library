@@ -8,17 +8,18 @@ require 'www-library/debug'
 class RequestManager
 	class Exception < Exception
 		attr_reader :content
-		attr_writer :exceptionMessageHandler
 		
 		def initialize(content)
 			@content = content
-			@exceptionMessageHandler = method(:defaultExceptionMessageHandler)
 		end
 	end
+	
+	attr_writer :exceptionMessageHandler
 	
 	def initialize(requestClass = HTTPRequest)
 		@handlers = []
 		@requestClass = requestClass
+		@exceptionMessageHandler = method(:defaultExceptionMessageHandler)
 	end
 	
 	def addHandler(handler)
