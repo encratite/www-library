@@ -8,9 +8,11 @@ require 'www-library/debug'
 class RequestManager
 	class Exception < Exception
 		attr_reader :content
+		attr_writer :exceptionMessageHandler
 		
 		def initialize(content)
 			@content = content
+			@exceptionMessageHandler = method(:defaultExceptionMessageHandler)
 		end
 	end
 	
@@ -86,6 +88,10 @@ class RequestManager
 		return debugMessage
 	end
 	
+	def defaultExceptionMessageHandler(message)
+		puts message
+	end
+	
 	def processError(request, environment, exception)
 		request = HTTPRequest.new(environment) if request == nil
 		
@@ -97,7 +103,7 @@ class RequestManager
 			content = 'An internal server error occured.'
 		end
 		
-		puts fullOutput
+		@exceptionMessageHandler.call(fullOutput)
 		
 		reply = HTTPReply.new content
 		reply.plain
