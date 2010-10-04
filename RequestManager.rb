@@ -16,9 +16,9 @@ class RequestManager
 	
 	attr_writer :exceptionMessageHandler
 	
-	def initialize(requestClass = HTTPRequest)
+	def initialize(requestConstructor = HTTPRequest)
 		@handlers = []
-		@requestClass = requestClass
+		@requestConstructor = requestConstructor
 		@exceptionMessageHandler = method(:defaultExceptionMessageHandler)
 	end
 	
@@ -113,10 +113,19 @@ class RequestManager
 		return reply
 	end
 	
+	def getRequestObject(environment)
+		if @requestConstructor.class == Proc
+			return @requestConstructor.call(environment)
+		else
+			return @requestConstructor.new(environment)
+		end
+	end
+	
 	def handleRequest(environment)
 		begin
+			#nil initialisation required because the construction may throw an exception
 			request = nil
-			request = @requestClass.new(environment)
+			request = getRequestObject(environment)
 		
 			output = nil
 
