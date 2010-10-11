@@ -187,7 +187,7 @@ class HTMLWriter
 	
 	#the tags marked as arrays don't produce newlines
 	self.createMethods [
-		'a',
+		['a'],
 		['b'],
 		'colgroup',
 		'div',
