@@ -1,49 +1,51 @@
 require 'www-library/HTML'
 
-class SymbolTransfer
-	def getMemberSymbol(symbol)
-		return ('@' + symbol.to_s).to_sym
-	end
-
-	def translateSymbolName(name)
-		output = ''
-		isUpper = false
-		name.to_s.each_char do |char|
-			if char == '_'
-				isUpper = true
-				next
-			end
-			
-			if isUpper
-				char = char.upcase
-				isUpper = false
-			end
-			
-			output += char
+module WWWLib
+	class SymbolTransfer
+		def getMemberSymbol(symbol)
+			return ('@' + symbol.to_s).to_sym
 		end
-		return output.to_sym
-	end
 
-	def transferSymbols(input, hash = {}, entityExceptions = [])
-		input.each do |symbol, value|
-			translatedSymbol = hash[symbol] || symbol
-			translatedSymbol = translateSymbolName translatedSymbol
-			memberSymbol = getMemberSymbol translatedSymbol
-			case value
-			when String
-				value = HTMLEntities::encode(value) if !entityExceptions.include?(translatedSymbol)
-			when Time
-				value = value.utc
+		def translateSymbolName(name)
+			output = ''
+			isUpper = false
+			name.to_s.each_char do |char|
+				if char == '_'
+					isUpper = true
+					next
+				end
+				
+				if isUpper
+					char = char.upcase
+					isUpper = false
+				end
+				
+				output += char
 			end
-			instance_variable_set(memberSymbol, value)
-			
-			self.class.send(:define_method, translatedSymbol) do
-				return instance_variable_get(memberSymbol)
-			end
-			
-			operatorSymbol = (translatedSymbol.to_s + '=').to_sym
-			self.class.send(:define_method, operatorSymbol) do |value|
+			return output.to_sym
+		end
+
+		def transferSymbols(input, hash = {}, entityExceptions = [])
+			input.each do |symbol, value|
+				translatedSymbol = hash[symbol] || symbol
+				translatedSymbol = translateSymbolName translatedSymbol
+				memberSymbol = getMemberSymbol translatedSymbol
+				case value
+				when String
+					value = HTMLEntities::encode(value) if !entityExceptions.include?(translatedSymbol)
+				when Time
+					value = value.utc
+				end
 				instance_variable_set(memberSymbol, value)
+				
+				self.class.send(:define_method, translatedSymbol) do
+					return instance_variable_get(memberSymbol)
+				end
+				
+				operatorSymbol = (translatedSymbol.to_s + '=').to_sym
+				self.class.send(:define_method, operatorSymbol) do |value|
+					instance_variable_set(memberSymbol, value)
+				end
 			end
 		end
 	end

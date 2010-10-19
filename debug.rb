@@ -1,4 +1,21 @@
-def hasDebugPrivilege(request)
-	privilegedAddresses = ['127.0.0.1']
-	return privilegedAddresses.include? request.address
+module WWWLib
+	class PrivilegedAddressContainer
+		def initialize
+			@addresses = ['127.0.0.1']
+		end
+		
+		def add(address)
+			@addresses << address
+		end
+		
+		def isPrivileged(address)
+			return @addresses.include?(address)
+		end
+	end
+	
+	PrivilegedAddresses = PrivilegedAddressContainer.new
+	
+	def hasDebugPrivilege(request)
+		return PrivilegedAddresses.isPrivileged(request.address)
+	end
 end
