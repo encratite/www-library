@@ -99,7 +99,7 @@ module WWWLib
 			
 			fullOutput = getDebugMessage(exception)
 				
-			if hasDebugPrivilege request
+			if WWWLib.hasDebugPrivilege(request)
 				content = fullOutput
 			else
 				content = 'An internal server error occured.'

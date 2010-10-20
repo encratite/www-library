@@ -1,5 +1,5 @@
 module WWWLib
-	def extractString(input, left, right)
+	def self.extractString(input, left, right)
 		offset1 = input.index(left)
 		return nil if offset1 == nil
 		offset1 += left.size
@@ -10,12 +10,12 @@ module WWWLib
 		return output
 	end
 
-	def slashify(input)
+	def self.slashify(input)
 		separator = '/'
 		return separator + input.join(separator)
 	end
 
-	def getSizeString(size)
+	def self.getSizeString(size)
 		fullBytesStringMode = false
 		
 		sizeStrings =

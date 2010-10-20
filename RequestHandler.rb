@@ -139,7 +139,7 @@ module WWWLib
 		
 		def getPath(*arguments)
 			elements = getParents.map { |handler| handler.name }.compact + arguments
-			return slashify elements
+			return WWWLib.slashify(elements)
 		end
 	end
 end

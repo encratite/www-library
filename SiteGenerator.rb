@@ -28,14 +28,13 @@ module WWWLib
 		end
 		
 		def head(title)
-
 			output =
-	<<END
-	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-	<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	END
+<<END
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+END
 
 			@stylesheets.each do |stylesheet|
 				output.concat "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"#{stylesheet}\" />\n"
@@ -43,12 +42,12 @@ module WWWLib
 			
 			@inlineStylesheets.each do |stylesheet|
 				output.concat <<END
-	<style type="text/css" media="screen">
-	/*<![CDATA[*/
-	#{stylesheet}
-	/*]]>*/
-	</style>
-	END
+<style type="text/css" media="screen">
+/*<![CDATA[*/
+#{stylesheet}
+/*]]>*/
+</style>
+END
 			end
 			
 			@scripts.each do |script|
@@ -56,20 +55,19 @@ module WWWLib
 			end
 
 			output.concat <<END
-	<title>#{title}</title>
-	</head>
-	<body>
-	END
+<title>#{title}</title>
+</head>
+<body>
+END
 
 			return output
 		end
 		
 		def foot
-			output =
-	<<END
-	</body>
-	</html>
-	END
+			output = <<END
+</body>
+</html>
+END
 			return output
 		end
 		

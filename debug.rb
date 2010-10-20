@@ -15,7 +15,7 @@ module WWWLib
 	
 	PrivilegedAddresses = PrivilegedAddressContainer.new
 	
-	def hasDebugPrivilege(request)
+	def self.hasDebugPrivilege(request)
 		return PrivilegedAddresses.isPrivileged(request.address)
 	end
 end
