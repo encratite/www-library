@@ -1,5 +1,9 @@
 module WWWLib
 	def self.writeJavaScript(input)
-		output = "<script type=\"text/javascript\">\n//<![CDATA[\n#{input}\n//]]>\n</script>\n"
+		newline = "\n"
+		if !input.empty? && input[-1] != newline
+			input += newline
+		end
+		output = "<script type=\"text/javascript\">\n//<![CDATA[\n#{input}//]]>\n</script>\n"
 	end
 end
