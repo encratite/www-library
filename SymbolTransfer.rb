@@ -34,7 +34,9 @@ module WWWLib
 				when String
 					value = HTMLEntities::encode(value) if !entityExceptions.include?(translatedSymbol)
 				when Time
-					value = value.utc
+					offset = value.utc_offset
+					value.utc
+					value += offset
 				end
 				instance_variable_set(memberSymbol, value)
 				
