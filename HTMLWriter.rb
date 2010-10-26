@@ -10,6 +10,16 @@ module WWWLib
 			@selected = selected
 		end
 	end
+	
+	class WriterTag
+		attr_reader :tag, :useNewlineByDefault, :isFunction
+		
+		def initialize(tag, useNewlineByDefault = false, isFunction = true)
+			@tag = tag
+			@useNewlineByDefault = useNewlineByDefault
+			@isFunction = isFunction
+		end
+	end
 
 	class HTMLWriter
 		attr_reader :output
@@ -76,10 +86,17 @@ module WWWLib
 		
 		def self.createMethods(methods)
 			methods.each do |method|
-				useNewlineByDefault = method.class != Array
-				method = method[0] if !useNewlineByDefault
-				send :define_method, method do |arguments = {}, &block|
-					tag(method, arguments, block, true, useNewlineByDefault)
+				if method.class != WriterTag.class
+					method = WriterTag.new(method)
+				end
+				if tag.isFunction
+					send :define_method, method do |arguments = {}, &block|
+						tag(method.tag, arguments, block, true, method.useNewlineByDefault)
+					end
+				else
+					send :define_method, method do |arguments = {}|
+						tag(method.tag, arguments, nil, true, method.useNewlineByDefault)
+					end
 				end
 			end
 		end
@@ -196,18 +213,30 @@ module WWWLib
 			tag('col', arguments)
 		end
 		
-		#the tags marked as arrays don't produce newlines by default
+		def cdata(&block)
+			write "/*<![CDATA[*/\n"
+			write block.call
+			write "/*]]>*/\n"
+		end
+		
 		self.createMethods [
-			['a'],
-			['b'],
+			WriterTag.new('a', false),
+			WriterTag.new('b', false),
 			'colgroup',
 			'div',
-			['i'],
+			'head',
+			'html',
+			WriterTag.new('i', false),
 			'li',
+			WriterTag.new('link', false, false),
+			'meta'
 			'option',
-			['p'],
+			WriterTag.new('p', false),
+			'script',
 			'span',
+			'style',
 			'table',
+			'title',
 			'td',
 			'th',
 			'tr',
