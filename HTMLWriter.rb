@@ -31,22 +31,32 @@ module WWWLib
 			return nil
 		end
 		
-		def tag(tag, arguments, function = nil, addIdFromName = true, useNewline = true)
+		def tag(tag, arguments, function = nil, addIdFromName = true, useNewlineByDefault = true)
 			newline = "\n"
-			writeNewline = lambda { write newline if useNewline }
 			
-			id = arguments[:id]
+			idSymbol = :id
+			id = arguments[idSymbol]
 			name = arguments[:name]
 			if name != nil && id == nil
 				id = getName name
-				arguments[:id] = id
+				arguments[idSymbol] = id
 			end
 			
 			if @ids.include?(id)
-				arguments.delete :id
+				arguments.delete(idSymbol)
 			elsif id != nil
 				@ids.add id
 			end
+			
+			newlineSymbol = :newline
+			useNewline = arguments[newlineSymbol]
+			if useNewline == nil
+				useNewline = useNewlineByDefault
+			else
+				arguments.delete(newlineSymbol)
+			end
+			
+			writeNewline = lambda { write newline if useNewline }
 			
 			argumentString = ''
 			arguments.each { |key, value| argumentString += " #{key.to_s}=\"#{value}\"" }
@@ -66,10 +76,10 @@ module WWWLib
 		
 		def self.createMethods(methods)
 			methods.each do |method|
-				useNewline = method.class != Array
-				method = method[0] if !useNewline
+				useNewlineByDefault = method.class != Array
+				method = method[0] if !useNewlineByDefault
 				send :define_method, method do |arguments = {}, &block|
-					tag(method, arguments, block, true, useNewline)
+					tag(method, arguments, block, true, useNewlineByDefault)
 				end
 			end
 		end
@@ -186,7 +196,7 @@ module WWWLib
 			tag('col', arguments)
 		end
 		
-		#the tags marked as arrays don't produce newlines
+		#the tags marked as arrays don't produce newlines by default
 		self.createMethods [
 			['a'],
 			['b'],
