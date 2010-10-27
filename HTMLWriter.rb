@@ -86,15 +86,15 @@ module WWWLib
 		
 		def self.createMethods(methods)
 			methods.each do |method|
-				if method.class != WriterTag.class
+				if method.class != WriterTag
 					method = WriterTag.new(method)
 				end
-				if tag.isFunction
-					send :define_method, method do |arguments = {}, &block|
+				if method.isFunction
+					define_method(method.tag) do |arguments = {}, &block|
 						tag(method.tag, arguments, block, true, method.useNewlineByDefault)
 					end
 				else
-					send :define_method, method do |arguments = {}|
+					define_method(method.tag) do |arguments = {}|
 						tag(method.tag, arguments, nil, true, method.useNewlineByDefault)
 					end
 				end
@@ -222,6 +222,7 @@ module WWWLib
 		self.createMethods [
 			WriterTag.new('a', false),
 			WriterTag.new('b', false),
+			'body',
 			'colgroup',
 			'div',
 			'head',
@@ -229,7 +230,7 @@ module WWWLib
 			WriterTag.new('i', false),
 			'li',
 			WriterTag.new('link', false, false),
-			'meta'
+			'meta',
 			'option',
 			WriterTag.new('p', false),
 			'script',

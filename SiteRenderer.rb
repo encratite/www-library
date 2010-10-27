@@ -48,7 +48,7 @@ module WWWLib
 					writer.title { title }
 					
 					if additionalHead != nil
-						write additionalHead
+						writer.write(additionalHead)
 					end
 				end
 				writer.body do
