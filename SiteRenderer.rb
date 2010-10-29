@@ -45,6 +45,10 @@ module WWWLib
 						end
 					end
 					
+					@scripts.each do |script|
+						writer.script(type: script.type, src: script.source) { '' }
+					end
+					
 					writer.title { title }
 					
 					if additionalHead != nil

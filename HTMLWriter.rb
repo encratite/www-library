@@ -12,12 +12,21 @@ module WWWLib
 	end
 	
 	class WriterTag
-		attr_reader :tag, :useNewlineByDefault, :isFunction
+		attr_reader :tag, :newlineType, :isFunction
 		
-		def initialize(tag, useNewlineByDefault = false, isFunction = true)
+		#newlineType may be either nil (no newlines), :final (only a newline after the terminating tag) or :full (newlines after every tag)
+		def initialize(tag, newlineType = :full, isFunction = true)
 			@tag = tag
-			@useNewlineByDefault = useNewlineByDefault
+			@newlineType = newlineType
 			@isFunction = isFunction
+		end
+		
+		def self.inline(tag)
+			return WriterTag.new(tag, nil)
+		end
+		
+		def self.final(tag)
+			return WriterTag.new(tag, :final)
 		end
 	end
 
@@ -38,10 +47,10 @@ module WWWLib
 		def write(text)
 			@output.concat text
 			@lastCharacter = text[-1]
-			return nil
+			return
 		end
 		
-		def tag(tag, arguments, function = nil, addIdFromName = true, useNewlineByDefault = true)
+		def tag(tag, arguments, function = nil, addIdFromName = true, newlineType = :full)
 			newline = "\n"
 			
 			idSymbol = :id
@@ -58,15 +67,12 @@ module WWWLib
 				@ids.add id
 			end
 			
-			newlineSymbol = :newline
-			useNewline = arguments[newlineSymbol]
-			if useNewline == nil
-				useNewline = useNewlineByDefault
-			else
-				arguments.delete(newlineSymbol)
+			newlineTypeSymbol = :newlineType
+			newlineTypeOverride = arguments[newlineTypeSymbol]
+			if newlineTypeOverride != nil
+				newlineType = newlineTypeOverride
+				arguments.delete(newlineTypeSymbol)
 			end
-			
-			writeNewline = lambda { write newline if useNewline }
 			
 			argumentString = ''
 			arguments.each { |key, value| argumentString += " #{key.to_s}=\"#{value}\"" }
@@ -74,14 +80,25 @@ module WWWLib
 				write "<#{tag}#{argumentString} />"
 			else
 				write "<#{tag}#{argumentString}>"
-				writeNewline.call
+				write newline if newlineType == :full
 				data = function.call
-				write data if data.class == String
-				writeNewline.call if @lastCharacter != newline
+				case data
+				when String
+					write data 
+				when Fixnum
+					write data.to_s
+				when Array
+					#common sight in .each calls at the end of the tag block
+					#let's just ignore these instead of raising an exception
+				when nil
+				else
+					raise "Invalid class returned by tag block: #{data.class}"
+				end
+				write newline if newlineType == :full && @lastCharacter != "\n"
 				write "</#{tag}>"
 			end
-			writeNewline.call
-			return nil
+			write newline if newlineType != nil
+			return
 		end
 		
 		def self.createMethods(methods)
@@ -91,11 +108,11 @@ module WWWLib
 				end
 				if method.isFunction
 					define_method(method.tag) do |arguments = {}, &block|
-						tag(method.tag, arguments, block, true, method.useNewlineByDefault)
+						tag(method.tag, arguments, block, true, method.newlineType)
 					end
 				else
 					define_method(method.tag) do |arguments = {}|
-						tag(method.tag, arguments, nil, true, method.useNewlineByDefault)
+						tag(method.tag, arguments, nil, true, method.newlineType)
 					end
 				end
 			end
@@ -109,6 +126,7 @@ module WWWLib
 			arguments[:method] = 'post'
 			arguments[:action] = action
 			tag('form', arguments, block)
+			return
 		end
 		
 		def withLabel(label, &block)
@@ -116,6 +134,7 @@ module WWWLib
 				li { label + ':' }
 				li { block.call }
 			end
+			return
 		end
 		
 		def field(type, label, name, value, arguments)
@@ -124,14 +143,18 @@ module WWWLib
 			arguments[:value] = value
 			
 			withLabel(label) do tag('input', arguments) end
+			
+			return
 		end
 		
 		def text(label, name, value = nil, arguments = {})
 			field('text', label, name, value, arguments)
+			return
 		end
 		
 		def password(label, name, value = nil, arguments = {})
 			field('password', label, name, value, arguments)
+			return
 		end
 		
 		def hidden(name, value = nil, arguments = {})
@@ -140,6 +163,8 @@ module WWWLib
 			arguments[:value] = value
 			
 			tag('input', arguments)
+			
+			return
 		end
 		
 		def radio(label, name, value, checked = false, arguments = {})
@@ -149,8 +174,10 @@ module WWWLib
 			arguments[:checked] = 'checked' if checked
 			arguments[:class] = 'radio' if arguments[:class] == nil
 			
-			tag('input', arguments, nil, false, false)
+			tag('input', arguments, nil, true, nil)
 			write " #{label}\n"
+			
+			return
 		end
 		
 		def select(name, options, arguments = {})
@@ -175,18 +202,20 @@ module WWWLib
 				arguments.delete :label
 				withLabel label do tagFunction.call end
 			end
+			return
 		end
 		
 		def textArea(label, name, value = '', arguments = {})
 			function = lambda { value }
 			arguments[:name] = name
 			withLabel label do tag('textarea', arguments, function) end
+			return
 		end
 		
 		def submit(description = 'Submit', arguments = {})
 			arguments = {type: 'submit', value: description, class: 'submit'}
 			
-			function = lambda { tag('input', arguments) }
+			function = lambda { tag('input', arguments, nil, true, :final) }
 			
 			needSpan = false
 			if @request != nil
@@ -203,41 +232,46 @@ module WWWLib
 					function.call
 				end
 			end
+			
+			return
 		end
 		
 		def input(arguments = {})
-			tag('input', arguments)
+			tag('input', arguments, nil, true, :final)
+			return
 		end
 		
 		def col(arguments = {})
 			tag('col', arguments)
+			return
 		end
 		
 		def cdata(&block)
 			write "/*<![CDATA[*/\n"
 			write block.call
 			write "/*]]>*/\n"
+			return
 		end
 		
 		self.createMethods [
-			WriterTag.new('a', false),
-			WriterTag.new('b', false),
+			WriterTag.inline('a'),
+			WriterTag.inline('b'),
 			'body',
 			'colgroup',
 			'div',
 			'head',
 			'html',
-			WriterTag.new('i', false),
-			'li',
-			WriterTag.new('link', false, false),
+			WriterTag.inline('i'),
+			WriterTag.final('li'),
+			WriterTag.new('link', :final, false),
 			'meta',
-			'option',
-			WriterTag.new('p', false),
+			WriterTag.final('option'),
+			WriterTag.final('p'),
 			'script',
-			'span',
+			WriterTag.inline('span'),
 			'style',
 			'table',
-			'title',
+			WriterTag.final('title'),
 			'td',
 			'th',
 			'tr',
