@@ -46,7 +46,7 @@ module WWWLib
 					end
 					
 					@scripts.each do |script|
-						writer.script(type: script.type, src: script.source) { '' }
+						writer.script(type: script.type, src: script.source, newlineType: :final) { '' }
 					end
 					
 					writer.title { title }
