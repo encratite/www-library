@@ -50,6 +50,10 @@ module WWWLib
 			return
 		end
 		
+		def tagCall(tagString, arguments, newlineType = :full, &function)
+			tag(tagString, arguments, function, newlineType)
+		end
+		
 		def tag(tag, arguments, function = nil, newlineType = :full)
 			newline = "\n"
 			
