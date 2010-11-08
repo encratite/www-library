@@ -50,7 +50,7 @@ module WWWLib
 			return
 		end
 		
-		def tag(tag, arguments, function = nil, addIdFromName = true, newlineType = :full)
+		def tag(tag, arguments, function = nil, newlineType = :full)
 			newline = "\n"
 			
 			idSymbol = :id
@@ -108,11 +108,11 @@ module WWWLib
 				end
 				if method.isFunction
 					define_method(method.tag) do |arguments = {}, &block|
-						tag(method.tag, arguments, block, true, method.newlineType)
+						tag(method.tag, arguments, block, method.newlineType)
 					end
 				else
 					define_method(method.tag) do |arguments = {}|
-						tag(method.tag, arguments, nil, true, method.newlineType)
+						tag(method.tag, arguments, nil, method.newlineType)
 					end
 				end
 			end
@@ -174,7 +174,7 @@ module WWWLib
 			arguments[:checked] = 'checked' if checked
 			arguments[:class] = 'radio' if arguments[:class] == nil
 			
-			tag('input', arguments, nil, true, nil)
+			tag('input', arguments, nil, nil)
 			write " #{label}\n"
 			
 			return
@@ -215,7 +215,7 @@ module WWWLib
 		def submit(description = 'Submit', arguments = {})
 			arguments = {type: 'submit', value: description, class: 'submit'}
 			
-			function = lambda { tag('input', arguments, nil, true, :final) }
+			function = lambda { tag('input', arguments, nil, :final) }
 			
 			needSpan = false
 			if @request != nil
