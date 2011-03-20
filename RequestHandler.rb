@@ -4,6 +4,8 @@ require 'www-library/string'
 require 'www-library/RequestManager'
 require 'www-library/MIMEType'
 
+require 'cgi'
+
 module WWWLib
   class RequestHandler
     attr_reader :name, :isMenu, :menuDescription, :menuCondition
@@ -139,6 +141,7 @@ module WWWLib
 
     def getPath(*arguments)
       elements = getParents.map { |handler| handler.name }.compact + arguments
+      elements = elements.map { |element| CGI.escape(element) }
       return WWWLib.slashify(elements)
     end
   end

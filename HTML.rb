@@ -5,7 +5,11 @@ module WWWLib
     HtmlCoder = ::HTMLEntities.new
 
     def self.encode(input)
-      HtmlCoder.encode input
+      return HtmlCoder.encode(input)
+    end
+
+    def self.decode(input)
+      return HtmlCoder.decode(input)
     end
   end
 end
