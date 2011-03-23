@@ -3,9 +3,10 @@ require 'fileutils'
 require 'nil/file'
 
 require 'www-library/string'
+require 'www-library/HTMLWriter'
 
 module WWWLib
-  def self.syntaxHighlighting(script, input, installationSourcePath = nil)
+  def self.getSyntaxHighlightedMarkup(script, input, installationSourcePath = nil)
     outputFile = Tempfile.new('outputFile')
     outputFile.close
 
@@ -57,5 +58,43 @@ module WWWLib
     markup = outputFile.open.read
     code = WWWLib.extractString(markup, "<pre>\n", "</pre>")
     return code
+  end
+
+  def self.getCodeList(writer, content)
+    contentLines = content.split "\n"
+    writer.ul(class: 'lineNumbers') do
+      lineCounter = 1
+      contentLines.size.times do |i|
+        arguments = {}
+        arguments[:class] = 'lastLine' if lineCounter == contentLines.size
+        writer.li(arguments) { lineCounter.to_s }
+        lineCounter += 1
+      end
+      nil
+    end
+
+    isEven = false
+    writer.ul(class: 'contentList') do
+      lineCounter = 1
+      contentLines.each do |line|
+        if lineCounter == contentLines.size
+          lineClass = isEven ? 'evenLastLine' : 'oddLastLine'
+        else
+          lineClass = isEven ? 'evenLine' : 'oddLine'
+        end
+        writer.li(class: lineClass) { line }
+        isEven = !isEven
+        lineCounter += 1
+      end
+    end
+
+    nil
+  end
+
+  def self.getHighlightedList(script, input)
+    markup = WWWLib.getSyntaxHighlightedMarkup(script, input)
+    writer = HTMLWriter.new
+    WWWLib.getCodeList(writer, markup)
+    return writer.output
   end
 end
