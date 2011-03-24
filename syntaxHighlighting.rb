@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'tempfile'
 
 require 'nil/file'
 
@@ -24,7 +25,6 @@ module WWWLib
     ]
 
     scriptFile = 'html-highlighting.vim'
-    #scriptFile = 'pastebin.vim'
     scriptPath = Nil.joinPaths('syntax', scriptFile)
 
     if installationSourcePath != nil
@@ -92,7 +92,11 @@ module WWWLib
   end
 
   def self.getHighlightedList(script, input)
-    markup = WWWLib.getSyntaxHighlightedMarkup(script, input)
+    if script == nil
+      markup = input
+    else
+      markup = WWWLib.getSyntaxHighlightedMarkup(script, input)
+    end
     writer = HTMLWriter.new
     WWWLib.getCodeList(writer, markup)
     return writer.output
