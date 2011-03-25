@@ -4,6 +4,7 @@ require 'tempfile'
 require 'nil/file'
 
 require 'www-library/string'
+require 'www-library/HTML'
 require 'www-library/HTMLWriter'
 
 module WWWLib
@@ -93,7 +94,7 @@ module WWWLib
 
   def self.getHighlightedList(script, input)
     if script == nil
-      markup = input
+      markup = WWWLib::HTMLEntities.encode(input)
     else
       markup = WWWLib.getSyntaxHighlightedMarkup(script, input)
     end
