@@ -10,9 +10,13 @@ module WWWLib
     return output
   end
 
-  def self.slashify(input)
+  def self.slashify(input, finalSlash = false)
     separator = '/'
-    return separator + input.join(separator)
+    output = separator + input.join(separator)
+    if finalSlash
+      output += separator
+    end
+    return output
   end
 
   def self.getSizeString(size)

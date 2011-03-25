@@ -139,10 +139,18 @@ module WWWLib
       return output
     end
 
-    def getPath(*arguments)
+    def genericGetPath(arguments, slash = false)
       elements = getParents.map { |handler| handler.name }.compact + arguments
       elements = elements.map { |element| CGI.escape(element) }
-      return WWWLib.slashify(elements)
+      return WWWLib.slashify(elements, slash)
+    end
+
+    def getPath(*arguments)
+      return genericGetPath(arguments)
+    end
+
+    def getSlashPath(*arguments)
+      return genericGetPath(arguments, true)
     end
   end
 end
