@@ -100,6 +100,10 @@ module WWWLib
     end
     writer = HTMLWriter.new
     WWWLib.getCodeList(writer, markup)
-    return writer.output
+    markup = writer.output
+    #this is broken and should not be necessary - vim should manage this
+    markup = markup.gsub("\t", '    ')
+    markup = markup.gsub('  ', '&nbsp; ')
+    return markup
   end
 end
