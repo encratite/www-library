@@ -92,14 +92,38 @@ module WWWLib
     nil
   end
 
-  def self.getHighlightedList(script, input)
+  def self.getCodeTable(writer, content)
+    contentLines = content.split "\n"
+    writer.div(class: 'codeContainer') do
+      writer.table(class: 'codeTable') do
+        lineCounter = 1
+        contentLines.each do |line|
+          counterClass = 'codeTableCounter'
+          lineClass = 'codeTableLine'
+          lineClass += lineCounter % 2 == 1 ? 'Odd' : 'Even'
+          lastSuffix = 'Last'
+          if lineCounter == contentLines.size
+            lineClass += lastSuffix
+          end
+          writer.tr do
+            writer.td(class: counterClass) { lineCounter }
+            writer.td(class: lineClass) { line }
+          end
+          lineCounter += 1
+          nil
+        end
+      end
+    end
+  end
+
+  def self.getHighlightedContent(script, input)
     if script == nil
       markup = WWWLib::HTMLEntities.encode(input)
     else
       markup = WWWLib.getSyntaxHighlightedMarkup(script, input)
     end
     writer = HTMLWriter.new
-    WWWLib.getCodeList(writer, markup)
+    WWWLib.getCodeTable(writer, markup)
     markup = writer.output
     #this is broken and should not be necessary - vim should manage this
     markup = markup.gsub("\t", '    ')
