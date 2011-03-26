@@ -269,6 +269,7 @@ module WWWLib
                             WriterTag.final('h3'),
                             'html',
                             WriterTag.inline('i'),
+                            WriterTag.new('img', :final, false),
                             WriterTag.final('li'),
                             WriterTag.new('link', :final, false),
                             'meta',
