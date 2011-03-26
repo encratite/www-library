@@ -106,14 +106,29 @@ module WWWLib
             lineClass += lastSuffix
           end
           writer.tr do
-            writer.td(class: counterClass) { lineCounter }
-            writer.td(class: lineClass) { line }
+            writer.td(class: counterClass, newlineType: :final) { lineCounter }
+            writer.td(class: lineClass, newlineType: :final) { line }
           end
           lineCounter += 1
           nil
         end
       end
     end
+  end
+
+  def self.fixWhitespace(content)
+    space = '&nbsp;'
+    replacements = [
+      ["\t", ' ' * 4],
+      ['  ', "#{space} "],
+      ["\r", ''],
+      ['> ', ">#{space}"],
+      [' <', "#{space}<"],
+    ]
+    replacements.each do |target, replacement|
+      content = content.gsub(target, replacement)
+    end
+    return content
   end
 
   def self.getHighlightedContent(script, input)
@@ -124,10 +139,7 @@ module WWWLib
     end
     writer = HTMLWriter.new
     WWWLib.getCodeTable(writer, markup)
-    markup = writer.output
-    #this is broken and should not be necessary - vim should manage this
-    markup = markup.gsub("\t", '    ')
-    markup = markup.gsub('  ', '&nbsp; ')
-    return markup
+    output = WWWLib.fixWhitespace(writer.output)
+    return output
   end
 end
