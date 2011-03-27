@@ -3,13 +3,11 @@ require 'www-library/HTMLWriter'
 
 module WWWLib
   class SiteRenderer
-    Doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
-    W3URL = 'http://www.w3.org/1999/xhtml'
+    Doctype = '<!doctype html>'
     HTMLType = 'text/html'
     CSSType = 'text/css'
     IconType = 'image/ico'
-    Charset = 'UTF-8'
-    Language = 'en'
+    Charset = 'utf-8'
 
     def initialize
       @stylesheets = []
@@ -42,9 +40,9 @@ module WWWLib
     def get(title, content, additionalHead = nil)
       output = "#{Doctype}\n"
       writer = HTMLWriter.new(output)
-      writer.html('xmlns' => W3URL, 'xml:lang' => Language) do
+      writer.html do
         writer.head do
-          writer.meta('http-equiv' => 'Content-Type', 'content' => "#{HTMLType}; charset=#{Charset}")
+          writer.meta('charset' => Charset)
 
           if @icon != nil
             writer.link(rel: 'icon', type: IconType, href: @icon)

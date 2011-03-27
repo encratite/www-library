@@ -80,10 +80,11 @@ module WWWLib
 
       argumentString = ''
       arguments.each { |key, value| argumentString += " #{key.to_s}=\"#{value}\"" }
+      openingTag = "<#{tag}#{argumentString}>"
       if function == nil
-        write "<#{tag}#{argumentString} />"
+        write openingTag
       else
-        write "<#{tag}#{argumentString}>"
+        write openingTag
         write newline if newlineType == :full
         data = function.call
         case data
