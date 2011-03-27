@@ -15,6 +15,7 @@ module WWWLib
       @stylesheets = []
       @scripts = []
       @inlineStylesheets = []
+      @metas = {}
       @icon = nil
     end
 
@@ -34,6 +35,10 @@ module WWWLib
       @icon = icon
     end
 
+    def setMeta(name, content)
+      @metas[name] = content
+    end
+
     def get(title, content, additionalHead = nil)
       output = "#{Doctype}\n"
       writer = HTMLWriter.new(output)
@@ -47,6 +52,10 @@ module WWWLib
 
           @stylesheets.each do |stylesheet|
             writer.link(rel: 'stylesheet', type: CSSType, media: 'screen', href: stylesheet)
+          end
+
+          @metas.each do |name, content|
+            writer.meta('name' => name, 'content' => content)
           end
 
           @inlineStylesheets.each do |stylesheet|
