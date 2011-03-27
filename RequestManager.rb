@@ -61,8 +61,7 @@ module WWWLib
         reply = HTTPReply.new content
         reply.contentType = contentType
       when String
-        contentType = MIMEType::XHTML
-        contentType = MIMEType::HTML if !request.accept.include?(contentType)
+        contentType = MIMEType::HTML
         reply = HTTPReply.new output
         reply.contentType = contentType
       when HTTPReply
