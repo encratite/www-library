@@ -43,7 +43,7 @@ module WWWLib
 
     def get
       @fields['Content-Type'] = @contentType
-      @fields['Content-Length'] = @content.size.to_s
+      @fields['Content-Length'] = @content.bytesize.to_s
       @fields['Set-Cookie'] = @cookies.map { |cookie| cookie.get } if !@cookies.empty?
 
       output =
