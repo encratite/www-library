@@ -141,7 +141,7 @@ module WWWLib
 
     def genericGetPath(arguments, slash = false)
       elements = getParents.map { |handler| handler.name }.compact + arguments
-      elements = elements.map { |element| CGI.escape(element) }
+      elements = elements.map { |element| CGI.escape(element).gsub('+', '%20') }
       return WWWLib.slashify(elements, slash)
     end
 
