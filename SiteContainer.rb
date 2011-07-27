@@ -15,7 +15,7 @@ module WWWLibrary
     end
 
     def raiseError(error, request)
-      raise WWWLib::RequestManager::Exception.new(@generator.get(error, request))
+      raise RequestManager::Exception.new(@generator.get(error, request))
     end
   end
 end
