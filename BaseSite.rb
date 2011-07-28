@@ -1,7 +1,7 @@
 require 'www-library/RequestHandler'
 require 'www-library/RequestManager'
 
-module WWWLibrary
+module WWWLib
   class BaseSite
     attr_reader :mainHandler, :generator, :requestManager
 

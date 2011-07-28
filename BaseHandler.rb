@@ -1,9 +1,11 @@
+require 'www-library/Errors'
 require 'www-library/HTMLWriter'
 require 'www-library/RequestManager'
 
-module WWWLibrary
-  class SiteContainer
-    extend GetWriter
+module WWWLib
+  class BaseHandler
+    include GetWriter
+    include Errors
 
     def initialize(site)
       @site = site
