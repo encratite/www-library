@@ -1,6 +1,12 @@
 require 'set'
 
 module WWWLib
+  module GetWriter
+    def getWriter
+      return HTMLWriter.new
+    end
+  end
+
   class SelectOption
     attr_reader :description, :value
     attr_accessor :selected
@@ -136,156 +142,158 @@ module WWWLib
 
     def withLabel(label, &block)
       ul class: 'formLabel' do
-          li { label + ':' }
-          li { block.call }
-        end
-           return
-         end
-
-      def field(type, label, name, value, arguments)
-        arguments[:type] = type
-        arguments[:name] = name
-        arguments[:value] = value
-
-        withLabel(label) do tag('input', arguments) end
-
-        return
+        li { label + ':' }
+        li { block.call }
       end
-
-      def text(label, name, value = nil, arguments = {})
-        field('text', label, name, value, arguments)
-        return
-      end
-
-      def password(label, name, value = nil, arguments = {})
-        field('password', label, name, value, arguments)
-        return
-      end
-
-      def hidden(name, value = nil, arguments = {})
-        arguments[:type] = 'hidden'
-        arguments[:name] = name
-        arguments[:value] = value
-
-        tag('input', arguments)
-
-        return
-      end
-
-      def radio(label, name, value, checked = false, arguments = {})
-        arguments[:type] = 'radio'
-        arguments[:name] = name
-        arguments[:value] = value
-        arguments[:checked] = 'checked' if checked
-        arguments[:class] = 'radio' if arguments[:class] == nil
-
-        tag('input', arguments, nil, nil)
-        write " #{label}\n"
-
-        return
-      end
-
-      def select(name, options, arguments = {})
-        function = lambda do
-          gotASelection = false
-          options.each do |option|
-            currentArguments = {value: option.value}
-            if option.selected
-              raise 'You cannot specify more than one selected element in a <select> tag.' if gotASelection
-              gotASelection = true
-              currentArguments[:selected] = 'selected'
-            end
-            option currentArguments do option.description end
-          end
-        end
-        arguments[:name] = name
-        tagFunction = lambda { tag('select', arguments, function) }
-        label = arguments[:label]
-        if label == nil
-          tagFunction.call
-        else
-          arguments.delete :label
-          withLabel label do tagFunction.call end
-        end
-        return
-      end
-
-      def textArea(label, name, value = '', arguments = {})
-        function = lambda { value }
-        arguments[:name] = name
-        withLabel label do tag('textarea', arguments, function) end
-        return
-      end
-
-      def submit(description = 'Submit', arguments = {})
-        arguments = {type: 'submit', value: description, class: 'submit'}
-
-          function = lambda { tag('input', arguments, nil, :final) }
-
-          needSpan = false
-          if @request != nil
-            agent = @request.agent
-            needSpan = agent == :ie6 || agent == :ie7
-          end
-
-          p do
-            if needSpan
-              span do
-                function.call
-              end
-            else
-              function.call
-            end
-          end
-
-          return
-        end
-
-        def input(arguments = {})
-          tag('input', arguments, nil, true, :final)
-          return
-        end
-
-        def col(arguments = {})
-          tag('col', arguments)
-          return
-        end
-
-        def cdata(&block)
-          write "/*<![CDATA[*/\n"
-          write block.call
-          write "/*]]>*/\n"
-          return
-        end
-
-        self.createMethods [
-                            WriterTag.inline('a'),
-                            WriterTag.inline('b'),
-                            'body',
-                            'colgroup',
-                            'div',
-                            'head',
-                            WriterTag.final('h1'),
-                            WriterTag.final('h2'),
-                            WriterTag.final('h3'),
-                            'html',
-                            WriterTag.inline('i'),
-                            WriterTag.new('img', :final, false),
-                            WriterTag.final('li'),
-                            WriterTag.new('link', :final, false),
-                            'meta',
-                            WriterTag.final('option'),
-                            WriterTag.final('p'),
-                            'pre',
-                            'script',
-                            WriterTag.inline('span'),
-                            'style',
-                            'table',
-                            WriterTag.final('title'),
-                            'td',
-                            WriterTag.final('th'),
-                            'tr',
-                            'ul',
-                           ]
-      end
+      return
     end
+
+    def field(type, label, name, value, arguments)
+      arguments[:type] = type
+      arguments[:name] = name
+      arguments[:value] = value
+
+      withLabel(label) do tag('input', arguments) end
+
+      return
+    end
+
+    def text(label, name, value = nil, arguments = {})
+      field('text', label, name, value, arguments)
+      return
+    end
+
+    def password(label, name, value = nil, arguments = {})
+      field('password', label, name, value, arguments)
+      return
+    end
+
+    def hidden(name, value = nil, arguments = {})
+      arguments[:type] = 'hidden'
+      arguments[:name] = name
+      arguments[:value] = value
+
+      tag('input', arguments)
+
+      return
+    end
+
+    def radio(label, name, value, checked = false, arguments = {})
+      arguments[:type] = 'radio'
+      arguments[:name] = name
+      arguments[:value] = value
+      arguments[:checked] = 'checked' if checked
+      arguments[:class] = 'radio' if arguments[:class] == nil
+
+      tag('input', arguments, nil, nil)
+      write " #{label}\n"
+
+      return
+    end
+
+    def select(name, options, arguments = {})
+      function = lambda do
+        gotASelection = false
+        options.each do |option|
+          currentArguments = {value: option.value}
+          if option.selected
+            raise 'You cannot specify more than one selected element in a <select> tag.' if gotASelection
+            gotASelection = true
+            currentArguments[:selected] = 'selected'
+          end
+          option currentArguments do option.description end
+        end
+      end
+      arguments[:name] = name
+      tagFunction = lambda { tag('select', arguments, function) }
+      label = arguments[:label]
+      if label == nil
+        tagFunction.call
+      else
+        arguments.delete :label
+        withLabel label do tagFunction.call end
+      end
+      return
+    end
+
+    def textArea(label, name, value = '', arguments = {})
+      function = lambda { value }
+      arguments[:name] = name
+      withLabel label do tag('textarea', arguments, function, :final) end
+      return
+    end
+
+    def submit(description = 'Submit', arguments = {})
+      arguments = {type: 'submit', value: description, class: 'submit'}
+
+      function = lambda { tag('input', arguments, nil, :final) }
+
+      needSpan = false
+      if @request != nil
+        agent = @request.agent
+        needSpan = agent == :ie6 || agent == :ie7
+      end
+
+      p do
+        if needSpan
+          span do
+            function.call
+          end
+        else
+          function.call
+        end
+      end
+
+      return
+    end
+
+    def input(arguments = {})
+      tag('input', arguments, nil, true, :final)
+      return
+    end
+
+    def col(arguments = {})
+      tag('col', arguments)
+      return
+    end
+
+    def cdata(&block)
+      write "/*<![CDATA[*/\n"
+      write block.call
+      write "/*]]>*/\n"
+      return
+    end
+
+    Methods = [
+      WriterTag.inline('a'),
+      WriterTag.inline('b'),
+      'body',
+      'colgroup',
+      'div',
+      'head',
+      WriterTag.final('h1'),
+      WriterTag.final('h2'),
+      WriterTag.final('h3'),
+      'html',
+      WriterTag.inline('i'),
+      WriterTag.new('img', :final, false),
+      WriterTag.final('li'),
+      WriterTag.new('link', :final, false),
+      'meta',
+      WriterTag.final('option'),
+      WriterTag.final('p'),
+      'pre',
+      'script',
+      WriterTag.inline('span'),
+      'style',
+      'table',
+      WriterTag.final('title'),
+      'td',
+      WriterTag.final('th'),
+      'tr',
+      'ul',
+    ]
+
+    self.createMethods(Methods)
+  end
+end
