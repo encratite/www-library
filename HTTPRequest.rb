@@ -109,5 +109,16 @@ module WWWLib
       names.each { |name| return false if @postInput[name] == nil }
       return true
     end
+
+    def getPostFields(*fields)
+      output = fields.map do |name|
+        value = @postInput[name]
+        if value == nil
+          return nil
+        end
+        value
+      end
+      return output
+    end
   end
 end
