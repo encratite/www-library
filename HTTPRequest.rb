@@ -2,7 +2,7 @@ require 'cgi'
 
 module WWWLib
   class HTTPRequest
-    attr_reader :path, :pathString, :method, :accept, :address, :getInput, :rawInput, :postInput, :cookies, :environment, :agent, :urlBase
+    attr_reader :path, :pathString, :method, :accept, :address, :getInput, :rawInput, :postInput, :cookies, :environment, :agent, :urlBase, :referrer
     attr_accessor :arguments, :handler
 
     UTF8BOM = "\xEF\xBB\xBF"
@@ -27,6 +27,8 @@ module WWWLib
           @accept << token.split(';')[0]
         end
       end
+
+      @referrer = environment['HTTP_REFERER']
 
       @address = environment['HTTP_X_REAL_IP']
       #workaround for non-proxied access
