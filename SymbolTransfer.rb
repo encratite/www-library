@@ -32,7 +32,9 @@ module WWWLib
         memberSymbol = getMemberSymbol translatedSymbol
         case value
         when String
-          value = HTMLEntities::encode(value) if !entityExceptions.include?(translatedSymbol)
+          if !(entityExceptions.include?(symbol) || entityExceptions.include?(translatedSymbol))
+            value = HTMLEntities::encode(value)
+          end
         when Time
           offset = value.utc_offset
           value.utc
