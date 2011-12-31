@@ -118,9 +118,11 @@ module WWWLib
 
   def self.fixWhitespace(content)
     space = '&nbsp;'
+    spaceReplacement = ['  ', "#{space} "]
     replacements = [
       ["\t", ' ' * 4],
-      ['  ', "#{space} "],
+      spaceReplacement,
+      spaceReplacement,
       ["\r", ''],
       ['> ', ">#{space}"],
       [' <', "#{space}<"],
