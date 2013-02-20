@@ -11,12 +11,12 @@ module WWWLib
       domain = "#{label}(\\.#{label})*"
 
       email = "#{localString}@#{domain}"
-      patternString = "^#{email}$"
+      patternString = "\A#{email}\z"
       Regexp.new patternString
     end
 
     def self.isValidEmailAddress address
-      return address.index("\n") == nil && Pattern.match(address) != nil
+      return Pattern.match(address) != nil
     end
 
     Pattern = self.createPattern
