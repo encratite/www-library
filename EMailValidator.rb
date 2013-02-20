@@ -16,7 +16,7 @@ module WWWLib
     end
 
     def self.isValidEmailAddress address
-      Pattern.match(address) != nil
+      return address.index("\n") == nil && Pattern.match(address) != nil
     end
 
     Pattern = self.createPattern
